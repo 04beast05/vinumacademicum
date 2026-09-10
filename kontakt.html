@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vinum Academicum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/kontakt.css">
+<style>
+  
+</style>
+</head>
+<body>
+
+  <!-- ---------- PROVJERA PUNOLJETNOSTI ---------- -->
+  <div class="age-gate" id="ageGate" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Provjera punoljetnosti">
+    <div class="age-gate-inner">
+      <img class="age-gate-logo" src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
+      <h2 class="age-gate-title">Jeste li punoljetni?</h2>
+      <p class="age-gate-text">Ova stranica sadrži informacije o alkoholnim proizvodima te je namijenjena isključivo osobama starijim od 18 godina.</p>
+      <div class="age-gate-actions">
+        <button type="button" class="btn btn-light age-gate-btn" id="ageGateYes">Da, imam 18+</button>
+        <button type="button" class="btn btn-outline age-gate-btn" id="ageGateNo">Ne</button>
+      </div>
+      <p class="age-gate-note">Zabranjeno konzumiranje alkohola mlađima od 18 godina. Konzumirajte odgovorno.</p>
+    </div>
+  </div>
+  <div class="age-gate-blocked" id="ageGateBlocked" aria-hidden="true">
+    <div class="age-gate-blocked-inner">
+      <p>Nažalost, sadržaj ove stranice namijenjen je isključivo osobama starijim od 18 godina.</p>
+      <a href="https://www.google.com/" class="btn btn-light age-gate-btn">Napusti stranicu</a>
+    </div>
+  </div>
+  <script>
+    // Provjera punoljetnosti: prikazuje se jednom po posjeti (sessionStorage),
+    // pa se ne ponavlja pri prelasku izmedju index.html i kontakt.html u istoj sjednici.
+    (function(){
+      var KLJUC = 'va_punoljetan';
+      var gate = document.getElementById('ageGate');
+      var blocked = document.getElementById('ageGateBlocked');
+      if (!gate) return;
+
+      var vecPotvrdjeno = false;
+      try { vecPotvrdjeno = sessionStorage.getItem(KLJUC) === '1'; } catch (e) {}
+
+      if (vecPotvrdjeno){
+        gate.style.display = 'none';
+        return;
+      }
+
+      document.documentElement.style.overflowY = 'hidden';
+      requestAnimationFrame(function(){
+        gate.classList.add('is-open');
+        gate.setAttribute('aria-hidden', 'false');
+      });
+
+      var da = document.getElementById('ageGateYes');
+      var ne = document.getElementById('ageGateNo');
+
+      da.addEventListener('click', function(){
+        try { sessionStorage.setItem(KLJUC, '1'); } catch (e) {}
+        gate.classList.remove('is-open');
+        gate.setAttribute('aria-hidden', 'true');
+        document.documentElement.style.overflowY = '';
+        setTimeout(function(){ gate.style.display = 'none'; }, 450);
+      });
+
+      ne.addEventListener('click', function(){
+        gate.style.display = 'none';
+        if (blocked){
+          blocked.classList.add('is-open');
+          blocked.setAttribute('aria-hidden', 'false');
+        }
+      });
+    })();
+  </script>
+
+  <nav class="navbar">
+    <a href="#" class="nav-logo" aria-label="Vinum Academicum">
+      <img src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
+    </a>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="index.html#nasa-prica">Naša priča</a></li>
+        <li><a href="index.html#terroir">Terroir</a></li>
+        <li><a href="index.html#kolekcija-vina">Kolekcija vina</a></li>
+      </ul>
+      <div class="menu-icon" id="menuToggle" aria-label="Meni" aria-expanded="false" role="button" tabindex="0">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="site-menu" id="siteMenu" aria-hidden="true">
+    <div class="site-menu-overlay" data-menu-close></div>
+    <div class="site-menu-panel">
+      <div class="site-menu-head">
+        <a href="#" class="site-menu-logo" aria-label="Vinum Academicum">
+          <img src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
+        </a>
+        <button class="site-menu-close" type="button" aria-label="Zatvori izbornik" data-menu-close>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5 L19 19 M19 5 L5 19" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <nav class="site-menu-links">
+        <a href="index.html#nasa-prica" data-menu-close>Naša priča</a>
+        <a href="index.html#terroir" data-menu-close>Terroir</a>
+        <a href="index.html#kolekcija-vina" data-menu-close>Kolekcija vina</a>
+        <a href="index.html#rudinske-glave" data-menu-close>Rudinske glave</a>
+        <a href="index.html#posjetite-nas" data-menu-close>Posjetite nas</a>
+        <a href="index.html#posjetite-nas" data-menu-close>Novosti</a>
+      </nav>
+
+      <div class="site-menu-bottom">
+        <a href="#" class="site-menu-cta" data-menu-close>Kupi naše vino</a>
+        <div class="site-menu-socials">
+          <a href="https://web.facebook.com/p/Vinum-Academicum-61573366985197/?_rdc=1&amp;_rdr" target="_blank" rel="noopener" aria-label="Facebook" class="icon-fb">f</a>
+          <a href="https://www.instagram.com/vinumacademicum/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <mask id="ig-mask-menu"><rect x="0" y="0" width="24" height="24" fill="#fff"/><circle cx="12" cy="12" r="4" fill="#000"/><circle cx="17.3" cy="6.7" r="1.2" fill="#000"/></mask>
+              <rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor" mask="url(#ig-mask-menu)"/>
+              <circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <section class="kontakt-hero">
+    <div class="kontakt-hero-copy">
+      <h1>Kontaktirajte nas</h1>
+      <p>Za kupovinu vina, obilazak naših vinograda ili dodatne informacije, slobodno nam se obratite ili nas posjetite na navedenim lokacijama.</p>
+    </div>
+  </section>
+
+  <section class="kontakt">
+    <div class="kontakt-inner">
+      <div class="kontakt-lijevo">
+        <h2>Javite nam se, stojimo vam na raspolaganju</h2>
+
+        <div class="kontakt-blok">
+          <h3>Kontakt</h3>
+          <a href="mailto:vinumacademicum@gmail.com">vinumacademicum@gmail.com</a>
+          <a href="tel:+385995226371">+385 99 522 6371</a>
+        </div>
+
+        <div class="kontakt-blok">
+          <h3>Trgovina</h3>
+          <p>Cehovska ul. 1, 34000 Požega</p>
+          <p>Pon–pet: 08:00–16:00</p>
+        </div>
+
+        <div class="kontakt-blok">
+          <h3>Poduzeće</h3>
+          <p>Vukovarska ul. 17, 34000 Požega</p>
+          <p>OIB: 68603972982</p>
+          <p>11020, Proizvodnja vina od grožđa</p>
+        </div>
+
+        <div class="kontakt-blok">
+          <h3>Zapratite nas</h3>
+          <div class="kontakt-socials">
+            <a href="https://web.facebook.com/p/Vinum-Academicum-61573366985197/?_rdc=1&amp;_rdr" target="_blank" rel="noopener" aria-label="Facebook">f</a>
+            <a href="https://www.instagram.com/vinumacademicum/" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <mask id="ig-mask-kontakt"><rect x="0" y="0" width="24" height="24" fill="#fff"/><circle cx="12" cy="12" r="4" fill="#000"/><circle cx="17.3" cy="6.7" r="1.2" fill="#000"/></mask>
+                <rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor" mask="url(#ig-mask-kontakt)"/>
+                <circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="kontakt-desno">
+        <form class="kontakt-form" id="kontaktForm" novalidate>
+          <div class="kontakt-red">
+            <input type="text" name="ime" placeholder="Ime*" required>
+            <input type="text" name="prezime" placeholder="Prezime*" required>
+          </div>
+          <input type="email" name="email" placeholder="Email adresa*" required>
+          <input type="text" name="razlog" placeholder="Razlog javljanja* (Informacije, kupnja vina, posjete itd.)" required>
+          <textarea name="poruka" placeholder="Vaša poruka*" required></textarea>
+        </form>
+
+        <p class="kontakt-napomena">Slanjem ovog obrasca potvrdno pristajete na obradu vaših osobnih podataka u svrhu odgovaranja na vaš upit. Vaši se podaci pohranjuju povjerljivo i neće biti dijeljeni s trećim stranama niti korišteni u druge svrhe.</p>
+
+        <button class="kontakt-posalji" type="submit" form="kontaktForm">Pošalji</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="site-footer-main">
+      <div class="site-footer-inner">
+        <a href="index.html" class="footer-logo" aria-label="Vinum Academicum">
+          <img src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
+        </a>
+        <p class="site-footer-tagline">Vina rođena na obroncima Papuka, stvorena strpljenjem, s poštovanjem prema zavičaju i vremenu.</p>
+
+        <nav class="footer-nav">
+          <a href="index.html#nasa-prica">Naša priča</a>
+          <a href="index.html#terroir">Terroir</a>
+          <a href="index.html#kolekcija-vina">Kolekcija vina</a>
+          <a href="index.html#rudinske-glave">Rudinske glave</a>
+          <a href="kontakt.html">Kontakt</a>
+        </nav>
+
+        <div class="footer-line"></div>
+
+        <div class="site-footer-grid">
+          <div class="footer-col">
+            <h3>Vinum Academium d.o.o.</h3>
+            <p>Vukovarska 17, 34000 Požega</p>
+            <p>OIB: 68603972982</p>
+          </div>
+
+          <div class="footer-col">
+            <h3>Podrum</h3>
+            <p>34335 Podgorje</p>
+            <p>45.4447° N, 17.7836° E</p>
+          </div>
+
+          <div class="footer-col">
+            <h3>Kontakt</h3>
+            <a href="tel:+38534621621">+385 (0)34 621 621</a>
+            <a href="mailto:vinumacademicum@gmail.com">vinumacademicum@gmail.com</a>
+          </div>
+        </div>
+
+        <div class="site-footer-socials">
+          <a href="https://web.facebook.com/p/Vinum-Academicum-61573366985197/?_rdc=1&amp;_rdr" target="_blank" rel="noopener" aria-label="Facebook" class="icon-fb">f</a>
+          <a href="https://www.instagram.com/vinumacademicum/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <mask id="ig-mask-footer"><rect x="0" y="0" width="24" height="24" fill="#fff"/><circle cx="12" cy="12" r="4" fill="#000"/><circle cx="17.3" cy="6.7" r="1.2" fill="#000"/></mask>
+              <rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor" mask="url(#ig-mask-footer)"/>
+              <circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="site-footer-bottom">
+      <span>© Vinum Academicum. Sva prava pridržana.</span>
+      <span>Zabranjeno konzumiranje alkohola mlađima od 18 godina. Konzumirajte odgovorno.</span>
+    </div>
+  </footer>
+
+  <script>
+    // Otvaranje/zatvaranje glavnog izbornika
+    (function(){
+      var toggles = [document.getElementById('menuToggle'), document.getElementById('menuToggleMobile')].filter(Boolean);
+      var menu = document.getElementById('siteMenu');
+      if (!toggles.length || !menu) return;
+
+      function openMenu(){
+        menu.classList.add('is-open');
+        toggles.forEach(function(t){
+          t.classList.add('is-open');
+          t.setAttribute('aria-expanded', 'true');
+        });
+        menu.setAttribute('aria-hidden', 'false');
+        // Zaključavanje se stavlja na <html>, ne na <body>. Body ima height:100%,
+        // pa mu je "overflow:hidden" rezao sadržaj -> visina dokumenta pala bi na
+        // jedan ekran i stranica bi skočila na vrh (i ostala ondje nakon zatvaranja).
+        document.documentElement.style.overflowY = 'hidden';
+      }
+      function closeMenu(){
+        menu.classList.remove('is-open');
+        toggles.forEach(function(t){
+          t.classList.remove('is-open');
+          t.setAttribute('aria-expanded', 'false');
+        });
+        menu.setAttribute('aria-hidden', 'true');
+        document.documentElement.style.overflowY = '';
+      }
+      function toggleMenu(){
+        if (menu.classList.contains('is-open')) closeMenu(); else openMenu();
+      }
+
+      toggles.forEach(function(toggle){
+        toggle.addEventListener('click', toggleMenu);
+        toggle.addEventListener('keydown', function(e){
+          if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleMenu(); }
+        });
+      });
+
+      // Klik bilo gdje po otvorenom izborniku ga zatvara - i po zatamnjenoj
+      // pozadini i po samom panelu. Na mobitelu panel pokriva cijeli zaslon,
+      // pa bez ovoga nije bilo nacina za izlazak osim klika na neku poveznicu.
+      menu.addEventListener('click', closeMenu);
+
+      document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape') closeMenu();
+      });
+    })();
+  </script>
+
+  <script>
+
+    // Obrazac otvara e-mail klijent s popunjenom porukom.
+    // Staticna stranica nema server koji bi primio podatke, pa je ovo
+    // najjednostavniji nacin da poruka stvarno stigne.
+    (function(){
+      var form = document.getElementById('kontaktForm');
+      if (!form) return;
+
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+
+        var polja = {};
+        Array.prototype.forEach.call(form.elements, function(el){
+          if (el.name) polja[el.name] = el.value.trim();
+        });
+
+        if (!polja.ime || !polja.prezime || !polja.email || !polja.razlog || !polja.poruka){
+          alert('Molimo ispunite sva polja označena zvjezdicom.');
+          return;
+        }
+
+        var naslov = 'Upit s web stranice: ' + polja.razlog;
+        var tijelo = 'Ime i prezime: ' + polja.ime + ' ' + polja.prezime + '\n'
+                   + 'Email: ' + polja.email + '\n'
+                   + 'Razlog kontakta: ' + polja.razlog + '\n\n'
+                   + polja.poruka;
+
+        window.location.href = 'mailto:vinumacademicum@gmail.com'
+          + '?subject=' + encodeURIComponent(naslov)
+          + '&body=' + encodeURIComponent(tijelo);
+      });
+    })();
+  </script>
+
+
+</body>
+</html>

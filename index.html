@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vinum Academicum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+  <!-- ---------- PROVJERA PUNOLJETNOSTI ---------- -->
+  <div class="age-gate" id="ageGate" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Provjera punoljetnosti">
+    <div class="age-gate-inner">
+      <img class="age-gate-logo" src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
+      <h2 class="age-gate-title">Jeste li punoljetni?</h2>
+      <p class="age-gate-text">Ova stranica sadrži informacije o alkoholnim proizvodima te je namijenjena isključivo osobama starijim od 18 godina.</p>
+      <div class="age-gate-actions">
+        <button type="button" class="btn btn-light age-gate-btn" id="ageGateYes">Da, imam 18+</button>
+        <button type="button" class="btn btn-outline age-gate-btn" id="ageGateNo">Ne</button>
+      </div>
+      <p class="age-gate-note">Zabranjeno konzumiranje alkohola mlađima od 18 godina. Konzumirajte odgovorno.</p>
+    </div>
+  </div>
+  <div class="age-gate-blocked" id="ageGateBlocked" aria-hidden="true">
+    <div class="age-gate-blocked-inner">
+      <p>Nažalost, sadržaj ove stranice namijenjen je isključivo osobama starijim od 18 godina.</p>
+      <a href="https://www.google.com/" class="btn btn-light age-gate-btn">Napusti stranicu</a>
+    </div>
+  </div>
+  <script>
+    // Provjera punoljetnosti: prikazuje se jednom po posjeti (sessionStorage),
+    // pa se ne ponavlja pri prelasku izmedju index.html i kontakt.html u istoj sjednici.
+    (function(){
+      var KLJUC = 'va_punoljetan';
+      var gate = document.getElementById('ageGate');
+      var blocked = document.getElementById('ageGateBlocked');
+      if (!gate) return;
+
+      var vecPotvrdjeno = false;
+      try { vecPotvrdjeno = sessionStorage.getItem(KLJUC) === '1'; } catch (e) {}
+
+      if (vecPotvrdjeno){
+        gate.style.display = 'none';
+        return;
+      }
+
+      document.documentElement.style.overflowY = 'hidden';
+      // mali odmak da se tranzicija doista odigra (prikazivanje odmah na 'display:flex' bez ovoga ne animira)
+      requestAnimationFrame(function(){
+        gate.classList.add('is-open');
+        gate.setAttribute('aria-hidden', 'false');
+      });
+
+      var da = document.getElementById('ageGateYes');
+      var ne = document.getElementById('ageGateNo');
+
+      da.addEventListener('click', function(){
+        try { sessionStorage.setItem(KLJUC, '1'); } catch (e) {}
+        gate.classList.remove('is-open');
+        gate.setAttribute('aria-hidden', 'true');
+        document.documentElement.style.overflowY = '';
+        setTimeout(function(){ gate.style.display = 'none'; }, 450);
+      });
+
+      ne.addEventListener('click', function(){
+        gate.style.display = 'none';
+        if (blocked){
+          blocked.classList.add('is-open');
+          blocked.setAttribute('aria-hidden', 'false');
+        }
+      });
+    })();
+  </script>
+
+  <nav class="navbar">
+    <a href="#" class="nav-logo" aria-label="Vinum Academicum">
+      <img src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
+    </a>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="#nasa-prica">Naša priča</a></li>
+        <li><a href="#terroir">Terroir</a></li>
+        <li><a href="#kolekcija-vina">Kolekcija vina</a></li>
+      </ul>
+      <div class="menu-icon" id="menuToggle" aria-label="Meni" aria-expanded="false" role="button" tabindex="0">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="site-menu" id="siteMenu" aria-hidden="true">
+    <div class="site-menu-overlay" data-menu-close></div>
+    <div class="site-menu-panel">
+      <nav class="site-menu-links">
+        <a href="#nasa-prica" data-menu-close>Naša priča</a>
+        <a href="#podrum" data-menu-close>Tajna našeg podruma</a>
+        <a href="#terroir" data-menu-close>Terroir</a>
+        <a href="#kolekcija-vina" data-menu-close>Kolekcija vina</a>
+        <a href="#rudinske-glave" data-menu-close>Rudinske glave</a>
+        <a href="#posjetite-vinariju" data-menu-close>Posjetite vinariju</a>
+        <a href="kontakt.html" data-menu-close>Kontakt</a>
+      </nav>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-photo" aria-hidden="true"></div>
+    <div class="hero-gradient" aria-hidden="true"></div>
+
+    <div class="mobile-hero-menu" id="menuToggleMobile" aria-label="Meni" aria-expanded="false" role="button" tabindex="0">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <h1>Spoj bogate<br class="mobile-break"> tradicije i enologije</h1>
+        <p>Priča o Vinum Academiumu započinje 2004. godine iz strasti prema vinogradarstvu i dubokog poštovanja prema slavonskom terroiru pod Papukom.</p>
+      </div>
+      <div class="hero-actions">
+        <a href="#" class="btn btn-light">Tko smo mi?</a>
+        <a href="#" class="btn btn-outline">Posjetite nas</a>
+      </div>
+    </div>
+
+    <!-- mobilna verzija hero sekcije: veliki logo u sredini i tri poveznice pri dnu -->
+    <div class="hero-mobile">
+      <div class="hero-mobile-logo">
+        <img class="hero-logo-obris" src="assets/img/vinumlogobijeli.svg" alt="" aria-hidden="true">
+        <img class="hero-logo-ispuna" src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
+      </div>
+      <nav class="hero-mobile-links">
+        <a href="#nasa-prica">Naša priča</a>
+        <a href="#posjetite-nas">Posjetite nas</a>
+        <a href="kontakt.html">Kontakt</a>
+      </nav>
+    </div>
+  </section>
+
+  <section class="wines" id="kolekcija-vina">
+    <div class="wines-container">
+      <div class="wines-header">
+        <h2>Pronađite vino za<br>trenutke koji se pamte</h2>
+        <div class="scroll-indicator"><span class="scroll-fill"></span></div>
+      </div>
+
+      <div class="wines-row-wrap">
+        <div class="wines-nav">
+          <button class="arrow-btn" id="winesPrev" aria-label="Prethodno vino"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12 H4.5 M11 5.5 L4.5 12 L11 18.5" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="arrow-btn" id="winesNext" aria-label="Sljedeće vino"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 H19.5 M13 5.5 L19.5 12 L13 18.5" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+
+        <div class="wines-row" id="winesRow">
+          <div class="wine-card">
+            <div class="wine-img-box"><img src="assets/img/wines_bottle_images/b1_grasevina.png" alt="Graševina"></div>
+            <p class="wine-name">Graševina</p>
+            <p class="wine-price">€6.80</p>
+      </div>
+          <div class="wine-card">
+            <div class="wine-img-box"><img src="assets/img/wines_bottle_images/b2_kumovo.png" alt="Kumovo Pinot Sivi"></div>
+            <p class="wine-name">Kumovo Pinot Sivi</p>
+            <p class="wine-price">€4.00</p>
+      </div>
+          <div class="wine-card">
+            <div class="wine-img-box"><img src="assets/img/wines_bottle_images/b10_dolce_aurea.png" alt="Dolce Aurea"></div>
+            <p class="wine-name">Dolce Aurea</p>
+            <p class="wine-price">€6.50</p>
+      </div>
+          <div class="wine-card">
+            <div class="wine-img-box"><img src="assets/img/wines_bottle_images/b11_grasevina_academia.png" alt="Graševina Academia"></div>
+            <p class="wine-name">Graševina Academia</p>
+            <p class="wine-price">€6.80</p>
+      </div>
+          <div class="wine-card">
+            <div class="wine-img-box"><img src="assets/img/wines_bottle_images/b12_sauvignon.png" alt="Sauvignon"></div>
+            <p class="wine-name">Sauvignon</p>
+            <p class="wine-price">€7.00</p>
+      </div>
+          <div class="wine-card">
+            <div class="wine-img-box"><img src="assets/img/wines_bottle_images/b8_rudina.png" alt="Rudina" class="wine-big"></div>
+            <p class="wine-name">Rudina</p>
+            <p class="wine-price">€4.00</p>
+      </div>
+          <div class="wine-card">
+            <div class="wine-img-box"><img src="assets/img/wines_bottle_images/c3_merlot.png" alt="Merlot"></div>
+            <p class="wine-name">Merlot</p>
+            <p class="wine-price">€5.50</p>
+      </div>
+          <div class="wine-card">
+            <div class="wine-img-box"><img src="assets/img/wines_bottle_images/c4_cabernet sauvignon crno.png" alt="Cabernet Sauvignon"></div>
+            <p class="wine-name">Cabernet Sauvignon</p>
+            <p class="wine-price">€9.49</p>
+      </div>
+          <div class="wine-card">
+            <div class="wine-img-box"><img src="assets/img/wines_bottle_images/c6_pinot crni obicni crno.png" alt="Pinot Crni"></div>
+            <p class="wine-name">Pinot Crni</p>
+            <p class="wine-price">€6.00</p>
+      </div>
+          <div class="wine-card">
+            <div class="wine-img-box"><img src="assets/img/wines_bottle_images/c7_syrah crno.png" alt="Syrah"></div>
+            <p class="wine-name">Syrah</p>
+            <p class="wine-price">€6.00</p>
+      </div>
+          <div class="wine-card">
+            <div class="wine-img-box"><img src="assets/img/wines_bottle_images/b14_muskat_zuti.png" alt="Muškat Žuti" class="wine-far wine-nize"></div>
+            <p class="wine-name">Muškat Žuti</p>
+            <p class="wine-price">€6.00</p>
+      </div>
+          <div class="wine-card">
+            <div class="wine-img-box"><img src="assets/img/wines_bottle_images/p5_chardonnay.png" alt="Chardonnay" class="wine-far"></div>
+            <p class="wine-name">Chardonnay</p>
+            <p class="wine-price">€26.00</p>
+      </div>
+          <div class="wine-card">
+            <div class="wine-img-box"><img src="assets/img/wines_bottle_images/p13_pinot_crni_izborna_berba crno.png" alt="Pinot Crni Izborna Berba" class="wine-far"></div>
+            <p class="wine-name">Pinot Crni Izborna Berba</p>
+            <p class="wine-price">€9.80</p>
+      </div>
+          <div class="wine-card">
+            <div class="wine-img-box"><img src="assets/img/wines_bottle_images/p15_grasevina_ledena.png" alt="Graševina Ledena" class="wine-far"></div>
+            <p class="wine-name">Graševina Ledena</p>
+            <p class="wine-price">€29.00</p>
+      </div>
+        </div>
+      </div>
+
+      <div class="scroll-indicator scroll-indicator-mobile"><span class="scroll-fill"></span></div>
+
+      <div class="wines-footer">
+        <p class="wines-desc">Bilo da želite popuniti svoju privatnu kolekciju, pronaći savršen dar ili jednostavno uživati u dobroj čaši, do naših vina možete doći jednostavno i brzo. Narudžbu možete predati slanjem poruke ili nas posjetiti osobno.</p>
+        <a href="kontakt.html" class="wines-cta">Kupi naše vino</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="cellar" id="podrum">
+    <div class="cellar-content">
+      <h2>Tajna našeg podruma</h2>
+      <p>Zavirite u prostore gdje vrijeme staje, a grožđe kroz godine polako preuzima svoj najbolji oblik.</p>
+      <a href="https://vinum.academicum360.virtual360studio.hr/" target="_blank" rel="noopener" class="btn btn-light">Virtualna šetnja</a>
+    </div>
+  </section>
+
+  <section class="story" id="nasa-prica">
+    <div class="story-row">
+      <div class="story-text">
+        <h2>Od vizije podno Papuka do<br class="desktop-break">prepoznatljivog vinskog potpisa</h2>
+        <p>Vinum Academium nastaje 2004. godine iz želje da se bogato znanje o vinogradarstvu spoji s neukroćenom ljepotom i potencijalom slavonskog podneblja.</p>
+        <p>Ono što je započelo kao odvažna vizija na osunčanim padinama podno Papuka, kroz godine neumornog i predanog rada izraslo je u prepoznatljivu vinariju u kojoj se tradicija ne samo čuva, nego i nadograđuje. Svaki korak u našem razvoju bio je vođen poštovanjem prema zavičaju i željom da stvorimo vina koja će ponosno predstavljati svoj kraj na svakom stolu.</p>
+      </div>
+      <div class="story-image"></div>
+    </div>
+  </section>
+
+  <section class="story2">
+    <div class="story2-row">
+      <div class="story2-image"></div>
+      <div class="story2-text">
+        <h2>Akademski pristup u<br>savršenoj ravnoteži s<br>prirodnim ritmom</h2>
+        <p>Naša vina nismo stvarali samo za formalne degustacije, već za sve one trenutke radosti koji čine život bogatijim. Bilo da se radi o velikim životnim slavljima, obiteljskim okupljanjima ili spontanom nazdravljanju s dragim prijateljima, želja nam je da u svakom gutljaju osjetite emociju i strast ugrađenu u njezino stvaranje.</p>
+        <p>Svaka čaša poziv je na usporavanje i uživanje u sadašnjem trenutku, stvarajući uspomene koje se pamte i kojima se uvijek rado vraćamo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="story3">
+    <div class="story3-row">
+      <div class="story3-text">
+        <h2>Trenuci u kojima vino<br class="mobile-hide-break"> spaja ljude i stvara<br class="mobile-hide-break"> trajne uspomene</h2>
+        <p>Iza svake boce Vinum Academiuma stoje mjeseci tihog rada, truda i posvećenosti u vinogradu, no naš rad svoju pravu i potpunu svrhu dobiva tek kada se vino utoči u čašu.</p>
+        <p>Zidovi našeg podruma svjedoci su najljepših priča, iskrenih razgovora i toplih susreta.</p>
+        <p>Vjerujemo da vino posjeduje jedinstvenu snagu da okupi ljude za istim stolom, ukloni svakodnevnu žurbu i stvori atmosferu prave slavonske dobrodošlice u kojoj se svaki gost osjeća kao dio naše obitelji.</p>
+      </div>
+      <div class="story3-image"></div>
+    </div>
+  </section>
+
+  <section class="terroir-video">
+    <video class="terroir-video-media" autoplay muted loop playsinline>
+      <source src="assets/img/video/terroir-pozadina.mp4" type="video/mp4">
+    </video>
+    <div class="terroir-video-overlay"></div>
+    <div class="terroir-video-content">
+      <div class="terroir-video-text">
+        <span class="terroir-label">Terroir</span>
+        <h2>Plodovi Papuka iz kojih nastaje<br>vrhunsko vino</h2>
+      </div>
+      <a href="#" class="btn btn-light">Više o terroiru</a>
+    </div>
+  </section>
+
+
+  <section class="terroir-detail" id="terroir">
+    <div class="terroir-inner">
+      <h2 class="terroir-naslov">Nagib terena, propusno tlo <br class="desktop-break">i južno sunce oblikuju karakter <br class="desktop-break">svake naše berbe</h2>
+
+      <div class="terroir-red">
+      <div class="terroir-uvod">
+        <p>Geografski položaj i prirodna dinamika terena u Podgorju stvaraju savršene uvjete za uzgoj vinove loze. Izraženi nagib padina osigurava prirodno otjecanje suvišne oborinske vode, čime se korijenski sustav štiti od zadržavanja vlage i potiče da prodire duboko u mineralne slojeve tla.</p>
+        <p>U kombinaciji s pažljivo usmjerenom osunčanošću, gdje je svaki trs tijekom dana izložen optimalnoj količini topline i svjetlosti, grožđe ujednačeno zrije i razvija visoku koncentraciju aromatskih spojeva. Rezultat ovog prirodno uravnoteženog okruženja jest grožđe iznimne čistoće i zrelosti, koje u podrum donosi autentičan pečat našeg položaja.</p>
+      </div>
+
+      <a href="#" class="terroir-vise"><span class="terroir-tocka" aria-hidden="true"></span>Pročitaj više o terroiru</a>
+      </div>
+
+      <div class="terroir-boxes">
+        <article class="terroir-box">
+          <div class="terroir-box-top">
+            <span class="terroir-box-num">01</span>
+            <span class="terroir-box-dot" aria-hidden="true"></span>
+          </div>
+          <div class="terroir-box-text">
+            <h3>Površina</h3>
+            <p>Vinograd obuhvaća 8 hektara pažljivo održavanih nasada na južnim padinama Papuka. Ovakva površina omogućuje potpunu posvećenost detaljima i ručnu berbu.</p>
+          </div>
+        </article>
+
+        <article class="terroir-box">
+          <div class="terroir-box-top">
+            <span class="terroir-box-num">02</span>
+            <span class="terroir-box-dot" aria-hidden="true"></span>
+          </div>
+          <div class="terroir-box-text">
+            <h3>Nadmorska visina</h3>
+            <p>Položaj se nalazi na idealnoj visini od 220 do 240 metara iznad razine mora. Cjelodnevno sunce i noćno hlađenje s planine čuvaju prirodnu svježinu i kiseline.</p>
+          </div>
+        </article>
+
+        <article class="terroir-box">
+          <div class="terroir-box-top">
+            <span class="terroir-box-num">03</span>
+            <span class="terroir-box-dot" aria-hidden="true"></span>
+          </div>
+          <div class="terroir-box-text">
+            <h3>Sastav tla</h3>
+            <p>Tlo se sastoji od specifičnog pseudogleja prožetog bogatim kamenitim skeletom. Duboko korijenje upija minerale iz kamena dajući vinu prepoznatljivu eleganciju.</p>
+          </div>
+        </article>
+
+        <article class="terroir-box">
+          <div class="terroir-box-top">
+            <span class="terroir-box-num">04</span>
+            <span class="terroir-box-dot" aria-hidden="true"></span>
+          </div>
+          <div class="terroir-box-text">
+            <h3>Položaj</h3>
+            <p>Vinogradi su smješteni na točnim koordinatama 45.4447° N, 17.7836° E. Zaštićene južne ekspozicije pružaju savršenu mikroklimu za postupno zrenje grožđa.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="rudinske-glave" id="rudinske-glave">
+    <div class="rudinske-glave-content">
+      <div class="rudinske-glave-copy">
+        <span class="rudinske-glave-label">Rudinske glave</span>
+        <h2>Kamena lica koja su postala<br class="desktop-break"> simbol naših vina</h2>
+        <a href="https://www.gmp.hr/3d-izlozbe/16-rudinske-glave/56-iskorak-u-buducnost-kamene-konzole-s-lokaliteta-rudina" target="_blank" rel="noopener" class="rudinske-link">Pročitaj više</a>
+      </div>
+
+      <div class="rudinske-row" id="rudinskeRow">
+        <div class="rudinska-card"><img src="assets/img/rudine/kprva.png" alt="Kamena konzola, Rudina"></div>
+        <div class="rudinska-card"><img src="assets/img/rudine/kdruga.png" alt="Kamena konzola, Rudina"></div>
+        <div class="rudinska-card"><img src="assets/img/rudine/ktreca.png" alt="Kamena konzola, Rudina"></div>
+        <div class="rudinska-card"><img src="assets/img/rudine/kcetvrta.png" alt="Kamena konzola, Rudina"></div>
+        <div class="rudinska-card"><img src="assets/img/rudine/kpeta.png" alt="Kamena konzola, Rudina"></div>
+        <div class="rudinska-card"><img src="assets/img/rudine/ksesta.png" alt="Kamena konzola, Rudina"></div>
+        <div class="rudinska-card"><img src="assets/img/rudine/ksedma.png" alt="Kamena konzola, Rudina"></div>
+        <div class="rudinska-card"><img src="assets/img/rudine/kosma.png" alt="Kamena konzola, Rudina"></div>
+        <div class="rudinska-card"><img src="assets/img/rudine/kdeveta.png" alt="Kamena konzola, Rudina"></div>
+        <div class="rudinska-card"><img src="assets/img/rudine/kdeseta.png" alt="Kamena konzola, Rudina"></div>
+        <div class="rudinska-card"><img src="assets/img/rudine/kjedanaesta.png" alt="Kamena konzola, Rudina"></div>
+        <div class="rudinska-card"><img src="assets/img/rudine/kdvanaesta.png" alt="Kamena konzola, Rudina"></div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <section class="final-section" id="posjetite-nas">
+    <div class="final-section-inner">
+      <div class="final-section-top">
+        <div class="final-section-heading">
+          <h2>@vinumacademicum</h2>
+          <p>Otkrijte kako teku pripreme za berbu, zavirite u atmosferu s degustacija i među prva saznajte sve o novim berbama i posebnim izdanjima.</p>
+          <div class="final-socials" aria-label="Društvene mreže">
+            <a href="https://web.facebook.com/p/Vinum-Academicum-61573366985197/?_rdc=1&amp;_rdr" target="_blank" rel="noopener" class="final-social icon-fb" aria-label="Facebook">f</a>
+            <a href="https://www.instagram.com/vinumacademicum/" target="_blank" rel="noopener" class="final-social instagram" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <mask id="ig-mask-final"><rect x="0" y="0" width="24" height="24" fill="#fff"/><circle cx="12" cy="12" r="4" fill="#000"/><circle cx="17.3" cy="6.7" r="1.2" fill="#000"/></mask>
+                <rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor" mask="url(#ig-mask-final)"/>
+                <circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/>
+              </svg>
+            </a>
+      </div>
+        </div>
+      </div>
+
+      <div class="final-fotke">
+        <div class="final-fotke-red">
+          <div class="final-fotka"><img src="assets/img/social1.jpg" alt="Vinum Academicum na društvenim mrežama"></div>
+          <div class="final-fotka"><img src="assets/img/social2.jpg" alt="Vinum Academicum na društvenim mrežama"></div>
+          <div class="final-fotka"><img src="assets/img/social3.jpg" alt="Vinum Academicum na društvenim mrežama"></div>
+          <div class="final-fotka"><img src="assets/img/social4.jpg" alt="Vinum Academicum na društvenim mrežama"></div>
+          <div class="final-fotka"><img src="assets/img/social5.jpg" alt="Vinum Academicum na društvenim mrežama"></div>
+          <div class="final-fotka"><img src="assets/img/social6.jpg" alt="Vinum Academicum na društvenim mrežama"></div>
+          <div class="final-fotka"><img src="assets/img/social7.jpg" alt="Vinum Academicum na društvenim mrežama"></div>
+          <div class="final-fotka"><img src="assets/img/social8.jpg" alt="Vinum Academicum na društvenim mrežama"></div>
+          <div class="final-fotka"><img src="assets/img/social9.jpg" alt="Vinum Academicum na društvenim mrežama"></div>
+          <!-- ista devetorka jos jednom, da se vrtnja spaja bez skoka -->
+          <div class="final-fotka je-kopija" aria-hidden="true"><img src="assets/img/social1.jpg" alt=""></div>
+          <div class="final-fotka je-kopija" aria-hidden="true"><img src="assets/img/social2.jpg" alt=""></div>
+          <div class="final-fotka je-kopija" aria-hidden="true"><img src="assets/img/social3.jpg" alt=""></div>
+          <div class="final-fotka je-kopija" aria-hidden="true"><img src="assets/img/social4.jpg" alt=""></div>
+          <div class="final-fotka je-kopija" aria-hidden="true"><img src="assets/img/social5.jpg" alt=""></div>
+          <div class="final-fotka je-kopija" aria-hidden="true"><img src="assets/img/social6.jpg" alt=""></div>
+          <div class="final-fotka je-kopija" aria-hidden="true"><img src="assets/img/social7.jpg" alt=""></div>
+          <div class="final-fotka je-kopija" aria-hidden="true"><img src="assets/img/social8.jpg" alt=""></div>
+          <div class="final-fotka je-kopija" aria-hidden="true"><img src="assets/img/social9.jpg" alt=""></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="posjet" id="posjetite-vinariju">
+    <video class="posjet-video" autoplay muted loop playsinline aria-hidden="true">
+      <source src="assets/img/video/posjetite vinariju.mp4" type="video/mp4">
+    </video>
+    <div class="posjet-content">
+      <span class="posjet-label">Posjetite nas</span>
+      <h2>Doživite čari naših vina i<br class="desktop-break"> vinarije uživo</h2>
+      <a href="kontakt.html" class="btn btn-light">Saznaj više</a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="site-footer-main">
+      <div class="site-footer-inner">
+        <a href="index.html" class="footer-logo" aria-label="Vinum Academicum">
+          <img src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
+        </a>
+        <p class="site-footer-tagline">Vina rođena na obroncima Papuka, stvorena strpljenjem, s poštovanjem prema zavičaju i vremenu.</p>
+
+        <nav class="footer-nav">
+          <a href="#nasa-prica">Naša priča</a>
+          <a href="#terroir">Terroir</a>
+          <a href="#kolekcija-vina">Kolekcija vina</a>
+          <a href="#rudinske-glave">Rudinske glave</a>
+          <a href="kontakt.html">Kontakt</a>
+        </nav>
+
+        <div class="footer-line"></div>
+
+        <div class="site-footer-grid">
+          <div class="footer-col">
+            <h3>Vinum Academium d.o.o.</h3>
+            <p>Vukovarska 17, 34000 Požega</p>
+            <p>OIB: 68603972982</p>
+      </div>
+
+          <div class="footer-col">
+            <h3>Podrum</h3>
+            <p>34335 Podgorje</p>
+            <p>45.4447° N, 17.7836° E</p>
+      </div>
+
+          <div class="footer-col">
+            <h3>Kontakt</h3>
+            <a href="tel:+38534621621">+385 (0)34 621 621</a>
+            <a href="mailto:vinumacademicum@gmail.com">vinumacademicum@gmail.com</a>
+      </div>
+        </div>
+
+        <div class="site-footer-socials">
+          <a href="https://web.facebook.com/p/Vinum-Academicum-61573366985197/?_rdc=1&amp;_rdr" target="_blank" rel="noopener" aria-label="Facebook" class="icon-fb">f</a>
+          <a href="https://www.instagram.com/vinumacademicum/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <mask id="ig-mask-footer"><rect x="0" y="0" width="24" height="24" fill="#fff"/><circle cx="12" cy="12" r="4" fill="#000"/><circle cx="17.3" cy="6.7" r="1.2" fill="#000"/></mask>
+              <rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor" mask="url(#ig-mask-footer)"/>
+              <circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="site-footer-bottom">
+      <span>© Vinum Academicum. Sva prava pridržana.</span>
+      <span>Zabranjeno konzumiranje alkohola mlađima od 18 godina. Konzumirajte odgovorno.</span>
+    </div>
+  </footer>
+
+  <script>
+    (function(){
+      var row = document.getElementById('winesRow');
+      var prevBtn = document.getElementById('winesPrev');
+      var nextBtn = document.getElementById('winesNext');
+      var fills = document.querySelectorAll('.scroll-fill');
+      if (!row || !prevBtn || !nextBtn) return;
+
+      function cardStep(){
+        var card = row.querySelector('.wine-card');
+        if (!card) return 370;
+        var style = getComputedStyle(row);
+        var gap = parseFloat(style.columnGap || style.gap || 20);
+        return card.getBoundingClientRect().width + gap;
+      }
+
+      prevBtn.addEventListener('click', function(){
+        row.scrollBy({ left: -cardStep(), behavior: 'smooth' });
+      });
+      nextBtn.addEventListener('click', function(){
+        row.scrollBy({ left: cardStep(), behavior: 'smooth' });
+      });
+
+      function updateFill(){
+        if (!fills.length) return;
+        var maxScroll = row.scrollWidth - row.clientWidth;
+        fills.forEach(function(fill){
+          var track = fill.parentElement;
+          var trackWidth = track.clientWidth;
+          var minFill = 40;
+          if (maxScroll <= 0){
+            fill.style.width = trackWidth + 'px';
+            fill.style.left = '0px';
+            return;
+          }
+          var progress = row.scrollLeft / maxScroll;
+          var fillWidth = Math.max(minFill, trackWidth * (row.clientWidth / row.scrollWidth));
+          var maxLeft = trackWidth - fillWidth;
+          fill.style.width = fillWidth + 'px';
+          fill.style.left = (progress * maxLeft) + 'px';
+        });
+      }
+
+      // Indikator se osvježava najviše jednom po frameu; inače se pri swipeu
+      // na svaki scroll event radi mjerenje + upis stila (forced layout) i karusel trza.
+      var fillTicking = false;
+      function onRowScroll(){
+        if (fillTicking) return;
+        fillTicking = true;
+        requestAnimationFrame(function(){ updateFill(); fillTicking = false; });
+      }
+
+      // povlacenje misem, da karusel ne djeluje staticno
+      var vuce = false, pocetakX = 0, pocetniScroll = 0, pomaknuto = 0;
+
+      row.addEventListener('mousedown', function(e){
+        vuce = true;
+        pocetakX = e.clientX;
+        pocetniScroll = row.scrollLeft;
+        pomaknuto = 0;
+        row.classList.add('is-dragging');
+        e.preventDefault();
+      });
+
+      window.addEventListener('mousemove', function(e){
+        if (!vuce) return;
+        var d = e.clientX - pocetakX;
+        pomaknuto = Math.max(pomaknuto, Math.abs(d));
+        row.scrollLeft = pocetniScroll - d;
+      });
+
+      window.addEventListener('mouseup', function(){
+        if (!vuce) return;
+        vuce = false;
+        row.classList.remove('is-dragging');
+      });
+
+      // klik nakon povlacenja ne otvara pop-up
+      row.addEventListener('click', function(e){
+        if (pomaknuto > 5){
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }, true);
+
+      row.addEventListener('scroll', onRowScroll, { passive: true });
+      window.addEventListener('resize', onRowScroll);
+      updateFill();
+    })();
+  </script>
+
+  <script>
+    // Scroll parallax na svim slikama (pozadinske fotografije sekcija + boce vina + terroir/final kartice)
+    (function(){
+      function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
+      var NONE = [];
+      // Na dodirnim uređajima pomiču se SAMO slike unutar svoje maske (transform =
+      // posao kompozitora, bez ponovnog crtanja). Pozadinske fotografije sekcija i
+      // pomak cijelog grida ostaju mirni jer je mijenjanje background-position
+      // fotografija preko cijelog ekrana na svaki frame ono što je rušilo FPS.
+      var isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+      // Pomicanje background-position velikih fotografija pri svakom frameu
+      // znaci ponovno crtanje cijelog zaslona i bio je glavni uzrok trzanja.
+      var bgMulti  = NONE;
+      // hero sada ima fotografije u zasebnim slojevima, pa se pomice svaki od njih
+      var bgSingle = NONE;
+      var bgLayer  = NONE;
+      // story-image i story2-image imaju obrezano pozicioniranje (zoom + bazni % umjesto ruba);
+      // koriste ispravnu "edge offset" CSS sintaksu da parallax ne pokvari rez.
+      var bgTopEdge  = NONE;
+      var bgLeftTopEdge = NONE;
+      var groups   = NONE;
+      var slojevi = NONE;
+
+      if (!bgMulti.length && !bgSingle.length && !bgLayer.length && !bgTopEdge.length && !bgLeftTopEdge.length && !groups.length && !slojevi.length) return;
+
+      var vh = window.innerHeight;
+      // Jedinstven intenzitet parallaxa za baš sve slike na stranici
+      var MULT = 30;
+      var MAX  = 24;
+
+      function shiftOf(rect){
+        var progress = ((rect.top + rect.height / 2) - vh / 2) / vh;
+        return clamp(progress * MULT, -MAX, MAX);
+      }
+
+      function update(){
+        // Prvo SVA mjerenja, pa tek onda svi upisi stilova. Naizmjenično
+        // čitanje/pisanje tjeralo je preglednik na novi izračun layouta za svaku
+        // grupu posebno (do 7 puta po frameu) - glavni izvor trzanja.
+        var jobs = [];
+
+        function measure(list, ref, apply){
+          list.forEach(function(el){
+            jobs.push({ el: el, shift: shiftOf(ref(el).getBoundingClientRect()), apply: apply });
+          });
+        }
+        function self(el){ return el; }
+
+        measure(bgMulti, self, function(el, s){
+          el.style.backgroundPosition = 'center, center calc(50% + ' + s + 'px)';
+        });
+        measure(bgSingle, self, function(el, s){
+          el.style.backgroundPosition = '50% calc(50% + ' + s + 'px)';
+        });
+        measure(bgLayer, self, function(el, s){
+          el.style.setProperty('--bgy', s + 'px');
+        });
+        measure(bgTopEdge, self, function(el, s){
+          el.style.backgroundPosition = '50% calc(8% + ' + s + 'px)';
+        });
+        measure(bgLeftTopEdge, self, function(el, s){
+          el.style.backgroundPosition = '50% calc(8% + ' + s + 'px)';
+        });
+        measure(slojevi, self, function(el, s){
+          el.style.setProperty('--py', s + 'px');
+        });
+        measure(groups, self, function(el, s){
+          el.style.transform = 'translateY(' + s + 'px)';
+        });
+
+        for (var i = 0; i < jobs.length; i++){
+          jobs[i].apply(jobs[i].el, jobs[i].shift);
+        }
+      }
+
+      var ticking = false;
+      function onScroll(){
+        if (!ticking){
+          requestAnimationFrame(function(){ update(); ticking = false; });
+          ticking = true;
+        }
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', function(){ vh = window.innerHeight; onScroll(); });
+      update();
+    })();
+  </script>
+
+  <script>
+    // Spori, "smooth" scroll cijele stranice (inercija/lerp), po uzoru na premium stranice tipa domperignon.com.
+    // Kotačić miša se ne skida odmah na ciljanu poziciju, nego glatko/sporo "stiže" do nje.
+    (function(){
+      var isTouch = window.matchMedia('(pointer: coarse)').matches || ('ontouchstart' in window);
+      if (isTouch) return; // na dodirnim uređajima zadržava se prirodni (native) scroll
+
+      var target = window.scrollY;
+      var current = window.scrollY;
+      var ease = 0.075; // manje = sporije/glađe
+      var raf = null;
+
+      function maxScroll(){
+        return document.documentElement.scrollHeight - window.innerHeight;
+      }
+
+      // Poveznice na sekcije moraju upravljati istim ciljem; da same pozovu
+      // scrollTo, ova bi ih petlja odmah vratila natrag na staru poziciju.
+      window.__vaScrollTo = function(y){
+        target = Math.max(0, Math.min(y, maxScroll()));
+      };
+
+      function onWheel(e){
+        // Pop-up ima vlastiti scroll; bez ovoga bi ova petlja presrela kotacic
+        // i pop-up se ne bi micao, jer je stranica ispod njega zakljucana.
+        if (e.target && e.target.closest && e.target.closest('.wine-modal')) return;
+
+        // Pusti horizontalni scroll (npr. karusel vina) da radi normalno,
+        // ali samo kad je gesta STVARNO horizontalna - inače vertikalni scroll
+        // iznad karusela ispadne iz "smooth" logike i "zablesira" prijelaz.
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+
+        e.preventDefault();
+        target = Math.max(0, Math.min(target + e.deltaY, maxScroll()));
+      }
+
+      function onKeydown(e){
+        var modal = document.getElementById('wineModal');
+        if (modal && modal.classList.contains('is-open')) return;
+
+        var active = document.activeElement;
+        if (active && active.closest && active.closest('#winesRow')) return;
+
+        var step = 90;
+        if (e.key === 'ArrowDown'){ target = Math.min(target + step, maxScroll()); e.preventDefault(); }
+        else if (e.key === 'ArrowUp'){ target = Math.max(target - step, 0); e.preventDefault(); }
+        else if (e.key === 'PageDown'){ target = Math.min(target + window.innerHeight * 0.9, maxScroll()); e.preventDefault(); }
+        else if (e.key === 'PageUp'){ target = Math.max(target - window.innerHeight * 0.9, 0); e.preventDefault(); }
+        else if (e.key === 'Home'){ target = 0; e.preventDefault(); }
+        else if (e.key === 'End'){ target = maxScroll(); e.preventDefault(); }
+      }
+
+      function loop(){
+        current += (target - current) * ease;
+        if (Math.abs(target - current) < 0.05) current = target;
+        window.scrollTo(0, current);
+        raf = requestAnimationFrame(loop);
+      }
+
+      // Ako korisnik ručno pomakne scrollbar (drag), sinkroniziraj cilj
+      var syncTimeout = null;
+      window.addEventListener('scroll', function(){
+        if (Math.abs(window.scrollY - current) > 2){
+          clearTimeout(syncTimeout);
+          syncTimeout = setTimeout(function(){
+            target = window.scrollY;
+            current = window.scrollY;
+          }, 120);
+        }
+      }, { passive: true });
+
+      window.addEventListener('resize', function(){
+        target = Math.min(target, maxScroll());
+      });
+
+      window.addEventListener('wheel', onWheel, { passive: false });
+      window.addEventListener('keydown', onKeydown);
+
+      raf = requestAnimationFrame(loop);
+    })();
+  </script>
+
+  <script>
+    // Red konzola se pomice povlacenjem misa. Kotacic se namjerno ne presrece,
+    // da skrolanje stranice preko konzola ne bi zapinjalo.
+    (function(){
+      var row = document.getElementById('rudinskeRow');
+      if (!row) return;
+
+      // povlacenje misem
+      var vuce = false, pocetakX = 0, pocetniScroll = 0;
+
+      var pomaknuto = 0;
+
+      row.addEventListener('mousedown', function(e){
+        vuce = true;
+        pocetakX = e.clientX;
+        pocetniScroll = row.scrollLeft;
+        pomaknuto = 0;
+        row.classList.add('is-dragging');
+        e.preventDefault();
+      });
+
+      window.addEventListener('mousemove', function(e){
+        if (!vuce) return;
+        var d = e.clientX - pocetakX;
+        pomaknuto = Math.max(pomaknuto, Math.abs(d));
+        row.scrollLeft = pocetniScroll - d;
+      });
+
+      window.addEventListener('mouseup', function(){
+        if (!vuce) return;
+        vuce = false;
+        row.classList.remove('is-dragging');
+      });
+
+      // ako je korisnik povlacio, klik ne smije otvoriti poveznicu
+      row.addEventListener('click', function(e){
+        if (pomaknuto > 5){
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }, true);
+
+    })();
+  </script>
+
+  <script>
+    // Uvod na mobilnoj verziji: kad se fotografija ucita, krece zamucenje
+    // i ispuna loga. Na desktopu ova klasa nema pridruzenih pravila.
+    (function(){
+      var hero = document.querySelector('.hero');
+      if (!hero) return;
+
+      var krenulo = false;
+      function pokreni(){
+        if (krenulo) return;
+        krenulo = true;
+        hero.classList.add('is-ready');
+      }
+
+      // ceka se fotografija, ali ne dulje od 2.5s da uvod ne zapne
+      var slika = new Image();
+      slika.onload = pokreni;
+      slika.onerror = pokreni;
+      slika.src = 'assets/img/pocetnaslika1.jpg';
+      setTimeout(pokreni, 2500);
+    })();
+  </script>
+
+
+  <script>
+    // Klik na poveznicu sekcije glatko klizi do nje
+    (function(){
+      document.addEventListener('click', function(e){
+        var link = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+        if (!link) return;
+        var id = link.getAttribute('href').slice(1);
+        if (!id) return;
+        var cilj = document.getElementById(id);
+        if (!cilj) return;
+
+        e.preventDefault();
+        var y = cilj.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop);
+
+        if (typeof window.__vaScrollTo === 'function'){
+          window.__vaScrollTo(y);
+        } else {
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+      });
+    })();
+  </script>
+
+  <script>
+    // Otvaranje/zatvaranje glavnog izbornika
+    (function(){
+      var toggles = [document.getElementById('menuToggle'), document.getElementById('menuToggleMobile')].filter(Boolean);
+      var menu = document.getElementById('siteMenu');
+      if (!toggles.length || !menu) return;
+
+      function openMenu(){
+        menu.classList.add('is-open');
+        toggles.forEach(function(t){
+          t.classList.add('is-open');
+          t.setAttribute('aria-expanded', 'true');
+        });
+        menu.setAttribute('aria-hidden', 'false');
+        // Zaključavanje se stavlja na <html>, ne na <body>. Body ima height:100%,
+        // pa mu je "overflow:hidden" rezao sadržaj -> visina dokumenta pala bi na
+        // jedan ekran i stranica bi skočila na vrh (i ostala ondje nakon zatvaranja).
+        document.documentElement.style.overflowY = 'hidden';
+      }
+      function closeMenu(){
+        menu.classList.remove('is-open');
+        toggles.forEach(function(t){
+          t.classList.remove('is-open');
+          t.setAttribute('aria-expanded', 'false');
+        });
+        menu.setAttribute('aria-hidden', 'true');
+        document.documentElement.style.overflowY = '';
+      }
+      function toggleMenu(){
+        if (menu.classList.contains('is-open')) closeMenu(); else openMenu();
+      }
+
+      toggles.forEach(function(toggle){
+        toggle.addEventListener('click', toggleMenu);
+        toggle.addEventListener('keydown', function(e){
+          if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleMenu(); }
+        });
+      });
+
+      // Klik bilo gdje po otvorenom izborniku ga zatvara - i po zatamnjenoj
+      // pozadini i po samom panelu. Na mobitelu panel pokriva cijeli zaslon,
+      // pa bez ovoga nije bilo nacina za izlazak osim klika na neku poveznicu.
+      menu.addEventListener('click', closeMenu);
+
+      document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape') closeMenu();
+      });
+    })();
+  </script>
+
+
+  <!-- ---------- POP-UP: POJEDINACNO VINO ---------- -->
+  <div class="wine-modal" id="wineModal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="wine-modal-inner">
+      <button class="wine-modal-close" type="button" id="wineModalClose" aria-label="Zatvori">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5 L19 19 M19 5 L5 19" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+      </button>
+
+      <div class="wine-modal-photo">
+        <img id="wineModalImg" src="" alt="">
+      </div>
+
+      <div class="wine-modal-body">
+      <span class="wine-modal-label" id="wineModalLabel"></span>
+      <h2 class="wine-modal-title" id="wineModalTitle"></h2>
+      <p class="wine-modal-desc" id="wineModalDesc"></p>
+
+      <div class="wine-modal-badges" id="wineModalBadges"></div>
+      <div class="wine-modal-price" id="wineModalPrice"></div>
+
+      <div id="wineModalBlocks" class="wine-acc-list"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    // Pop-up s podacima o pojedinom vinu.
+    // Naziv, cijena i fotografija se citaju iz same kartice, pa su uvijek
+    // uskladjeni s onim sto pise u kolekciji. Ostalo dolazi iz PODACI mape.
+    (function(){
+      var modal = document.getElementById('wineModal');
+      var kartice = Array.prototype.slice.call(document.querySelectorAll('.wine-card'));
+      if (!modal || !kartice.length) return;
+
+      var OPIS = 'Ugodno svježe vino svijetle slamnato-žute boje s izraženim voćnim i cvjetnim aromama jabuke, breskve i livadnog cvijeća. U ustima je skladno i dobrog tijela, uz ugodne kiseline i karakterističnu blagu gorčinu na završetku.';
+      var POSLUZIVANJE = 'Za puni uživajući doživljaj najbolje ga je poslužiti na temperaturi od 10 do 12 °C. Otvaranje boce nekoliko minuta prije rastočenja u klasične čaše u obliku tulipana omogućit će primarnim voćnim i cvjetnim aromama da se u potpunosti otvore.';
+      var GASTRO = 'Izvrsno pratiće jelima od bijelog mesa, teletini pod pekom i finim ribljim specijalitetima. Njezina svježina i uravnotežene kiseline sjajno prate kremaste tjestenine, tradicijske slavonske nareske te odabrane polutvrde sireve.';
+
+      function vino(vrsta, godina, vol, kolicina, tip, opis){
+        return {
+          vrsta: vrsta, godina: godina, vol: vol, kolicina: kolicina, tip: tip,
+          opis: opis || OPIS,
+          blokovi: [
+            ['Gastro preporuka', GASTRO],
+            ['Temperatura i posluživanje', POSLUZIVANJE],
+            ['Potencijal starenja', POSLUZIVANJE],
+            ['Uvjeti čuvanja', POSLUZIVANJE]
+          ]
+        };
+      }
+
+      var PODACI = {
+        'Graševina':                 vino('Bijelo vino', '2024', '12,5% vol.', '0,75 L (750 ml)', 'Suho vino', 'Ugodno svježe vino, svijetle slamnato-žute boje. Na mirisu dosta voćnosti te cvjetnih nota, koji upućuje na svježu jabuku i donekle na breskvu, te ponešto livadnog cvijeća. U ustima dobro zaobljeno, skladno, dobra tijela s dobrom kiselosti te na kraju s ugodnom blagom gorčinom koja je karakteristična za sortu Graševina.'),
+        'Kumovo Pinot Sivi':         vino('Bijelo vino', '2022', '12,5% vol.', '0,75 L (750 ml)', 'Suho vino', 'Slamnato žute boje s blagim odsjajom narančaste boje. Ugodnog je sortnog mirisa, s isprepletenim notama jabuke, kruške i nektarine. Vino je živahno i zrelo. Okus je pun i zaobljen, pomalo slankasto, ugodne svježine i postojanosti.'),
+        'Dolce Aurea':               vino('Kupaža bijelih vina', '2024', '11,5% vol.', '0,75 L (750 ml)', 'Poluslatko vino', 'Vino je svijetlo žute boje. Mirisom bogato s naglašenim notama svježeg i zrelog voća. U okusu je izrazito puno, ugodno, poluslatko i svježe. S obzirom na svoju slatkoću idealna je slastica za posebne prilike.'),
+        'Graševina Academia':        vino('Bijelo vino', '2022', '13,0% vol.', '0,75 L (750 ml)', 'Suho vino', 'Slamnato žute boje s blagom zelenkastom nijansom. Miris upućuje na zelenu jabuku, limun i limetu koji savršeno prate vaniliju uz nježni dodir slavonske hrastovine. Vino u ustima daje raskoš svježine u kombinaciji sa nježnom slasti, kremasto i zaobljeno, a opet moćnoga tijela i dugog postojanja.'),
+        'Sauvignon':                 vino('Bijelo vino', '2025', '12,5% vol.', '0,75 L (750 ml)', 'Suho vino'),
+        'Rudina':                    vino('Bijelo vino', '2025', '11,5% vol.', '1 L (1000 ml)',  'Suho vino'),
+        'Merlot':                    vino('Crno vino',   '2021', '13,0% vol.', '0,75 L (750 ml)', 'Suho vino', 'Vino koje dolazi sa južnog obronka parka prirode Papuk, maceracijom dobiva intenzivno rubin crvenu boju. Ugodnog mirisa sušenih šljiva, crnog ribiza i prezrelih jagoda. Karakterističnog okusa za Merlot sa jakim alkoholom te zaobljenih tanina, suho vino. Dozrijevanje se odvilo u hrastovim bačvama.'),
+        'Cabernet Sauvignon':        vino('Crno vino',   '',     '13,0% vol.', '0,75 L (750 ml)', 'Suho vino', 'Grožđe za ovo vino proizvedeno je na 350 metara nadmorske visine, na južnim padinama parka prirode Papuk. Vino tamne rubin boje popraćeno intenzivnim mirisima koji asociraju na crni ribizli, kupinu i borovnicu te crvenu sušenu papriku. Snažno, a opet kremasto u ustima gdje skladno dolazi do izražaja Barrique okusom vanilije i dima.'),
+        'Pinot Crni':                vino('Crno vino',   '',     '12,5% vol.', '0,75 L (750 ml)', 'Suho vino', 'Vino je tamne rubinsko crvene boje s ugodnom voćnosti u kojoj se ističu mirisi kupine, jagoda i ribizla. S obzirom na odležavanje u barriqueu upotpunjuje se kremastim i ugodno zaobljenim taninskim okusom.'),
+        'Syrah':                     vino('Crno vino',   '',     '13,0% vol.', '0,75 L (750 ml)', 'Suho vino', 'Vrhunsko vino tamne, crveno ljubičaste boje te snažne strukture. Intenzivnog mirisa koji snažno upućuje na zrele kupine i crni ribizli te pikantnost crnog papra i kave. U ustima bogat, pun skladan, a opet svjež i snažan. Arome crne čokolade, vanilije i ugodnog utiska Barriqua.'),
+        'Muškat Žuti':               vino('Bijelo vino', '2025', '11,5% vol.', '0,5 L (500 ml)',  'Poluslatko vino', 'Svjetlo žute boje, izraženog voćnog muškatnog i cvjetnog mirisa sa naglaskom na miris bazge. U ustima vino je umjereno slatko s puno svježine i balansirajućih kiselina. Tijelom je više na strani laganih vina. Dojam koji dobivamo na nepcu i okusi koji se razvijaju vrlo su podudarani mirisnoj aromatici vina, vino ima dug završetak.'),
+        'Chardonnay':                vino('Bijelo vino', '2011', '11,0% vol.', '0,375 L (375 ml)','Slatko vino', 'Moćnik među našim bijelim vinima koji svojom tamno slamnato žutom bojom dominira u čaši. Njegovan je dvanaest mjeseci na finom talogu u bačvama slavonskog hrasta. Harmoničan spoj voćnih aroma i drveta daje poseban ugođaj za Vaša osjetila mirisa i okusa. Moćnog alkohola koji se savršeno uklopio mirisima i okusima.'),
+        'Pinot Crni Izborna Berba':  vino('Crno vino',   '2018', '12,0% vol.', '0,5 L (500 ml)',  'Slatko vino', 'Slatko vino koje se svojom osobnošću ističe od drugih vina. Zanimljivog mirisa prezrelog voća i sušenih grožđica, a na nepce iznenađuje svojom slatkoćom i punoćom. Živahnog karaktera i dugog postojanja, te snažnog alkohola.'),
+        'Graševina Ledena berba':          vino('Bijelo vino', '2011', '10,5% vol.', '0,375 L (375 ml)','Slatko vino')
+      };
+
+      var el = {
+        img:    document.getElementById('wineModalImg'),
+        label:  document.getElementById('wineModalLabel'),
+        title:  document.getElementById('wineModalTitle'),
+        desc:   document.getElementById('wineModalDesc'),
+        badges: document.getElementById('wineModalBadges'),
+        price:  document.getElementById('wineModalPrice'),
+        blocks: document.getElementById('wineModalBlocks')
+      };
+
+      var trenutno = 0;
+
+      function prikazi(i){
+        trenutno = (i + kartice.length) % kartice.length;
+        var kartica = kartice[trenutno];
+        var slika = kartica.querySelector('img');
+        var naziv = kartica.querySelector('.wine-name');
+        var cijena = kartica.querySelector('.wine-price');
+        naziv = naziv ? naziv.textContent.trim() : '';
+        var p = PODACI[naziv] || vino('Vino', '', '', '', '');
+
+        el.img.src = slika ? slika.getAttribute('src') : '';
+        el.img.alt = naziv;
+        el.label.textContent = p.vrsta;
+        el.title.textContent = p.godina ? (naziv + ' ' + p.godina) : naziv;
+        el.desc.textContent = p.opis;
+        el.price.textContent = cijena ? cijena.textContent.trim() : '';
+
+        el.badges.innerHTML = '';
+        [p.vol, p.kolicina, p.tip].forEach(function(t){
+          if (!t) return;
+          var span = document.createElement('span');
+          span.className = 'wine-modal-badge';
+          span.textContent = t;
+          el.badges.appendChild(span);
+        });
+
+        el.blocks.innerHTML = '';
+        p.blokovi.forEach(function(b){
+          var stavka = document.createElement('div');
+          stavka.className = 'wine-acc';
+
+          var glava = document.createElement('button');
+          glava.type = 'button';
+          glava.className = 'wine-acc-head';
+          glava.setAttribute('aria-expanded', 'false');
+
+          var naslov = document.createElement('span');
+          naslov.textContent = b[0];
+          var plus = document.createElement('span');
+          plus.className = 'wine-acc-plus';
+          plus.setAttribute('aria-hidden', 'true');
+          glava.appendChild(naslov);
+          glava.appendChild(plus);
+
+          var tijelo = document.createElement('div');
+          tijelo.className = 'wine-acc-body';
+          var par = document.createElement('p');
+          par.textContent = b[1];
+          tijelo.appendChild(par);
+
+          glava.addEventListener('click', function(){
+            var vecOtvoren = stavka.classList.contains('is-open');
+
+            // zatvori sve; time je uvijek najvise jedan opis otvoren
+            Array.prototype.forEach.call(el.blocks.querySelectorAll('.wine-acc.is-open'), function(d){
+              d.classList.remove('is-open');
+              d.querySelector('.wine-acc-body').style.maxHeight = '';
+              d.querySelector('.wine-acc-head').setAttribute('aria-expanded', 'false');
+            });
+
+            if (!vecOtvoren){
+              stavka.classList.add('is-open');
+              tijelo.style.maxHeight = tijelo.scrollHeight + 'px';
+              glava.setAttribute('aria-expanded', 'true');
+
+              // Kad se opis rasklopi, zna zavrsiti ispod ruba zaslona.
+              // Ceka se kraj animacije (0.4s) pa se stavka dovuce u vidljivi
+              // dio; 'nearest' pomice tek onoliko koliko treba, a ako je vec
+              // cijela vidljiva ne mice nista.
+              setTimeout(function(){
+                stavka.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              }, 430);
+            }
+          });
+
+          stavka.appendChild(glava);
+          stavka.appendChild(tijelo);
+          el.blocks.appendChild(stavka);
+        });
+
+        modal.scrollTop = 0;
+        var tijelo = modal.querySelector('.wine-modal-body');
+        if (tijelo) tijelo.scrollTop = 0;
+      }
+
+      function otvori(i){
+        prikazi(i);
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.documentElement.style.overflowY = 'hidden';
+      }
+
+      function zatvori(){
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.documentElement.style.overflowY = '';
+      }
+
+      kartice.forEach(function(kartica, i){
+        kartica.style.cursor = 'pointer';
+
+        kartica.addEventListener('click', function(){
+          // klik nakon povlacenja karusela ne otvara pop-up
+          if (kartica.closest('.is-dragging')) return;
+          otvori(i);
+        });
+      });
+
+      document.getElementById('wineModalClose').addEventListener('click', zatvori);
+
+      document.addEventListener('keydown', function(e){
+        if (!modal.classList.contains('is-open')) return;
+        if (e.key === 'Escape') zatvori();
+        if (e.key === 'ArrowLeft') prikazi(trenutno - 1);
+        if (e.key === 'ArrowRight') prikazi(trenutno + 1);
+      });
+    })();
+  </script>
+
+
+</body>
+</html>
