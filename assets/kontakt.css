@@ -100,7 +100,9 @@
     width: 100%;
   }
   .menu-icon{
-    display: flex;
+    /* burger je samo za mobilnu/tablet verziju - na desktopu su poveznice
+       vec ispisane u .nav-links, pa se ikona ondje ne prikazuje duplo */
+    display: none;
     flex-direction: column;
     justify-content: center;
     gap: 5px;
@@ -1494,6 +1496,7 @@
     /* hamburger stoji u navbaru uz logo, pa su margine s obje strane jednake */
     .nav-right{ display: flex; }
     .nav-links{ display: none; }
+    .menu-icon{ display: flex; }
     .mobile-hero-menu{
       display: none;
     }
