@@ -109,7 +109,23 @@
   </div>
 
   <section class="hero">
-    <div class="hero-photo" aria-hidden="true"></div>
+    <div class="hero-photo" id="heroSlider" aria-hidden="true">
+      <!-- Slajder: svaki .hero-slide moze biti slika ILI video, radi isto na
+           mobitelu i desktopu. Za dodavanje novog slajda kopiraj jedan od
+           blokova ispod (s <img> ili s <video>) i dodaj ga na kraj popisa. -->
+      <div class="hero-slide is-active">
+        <img src="assets/img/pocetnaslika1.jpg" alt="Vinogradi Vinum Academicuma">
+      </div>
+      <div class="hero-slide">
+        <video autoplay muted loop playsinline>
+          <source src="assets/img/video/terroir-pozadina.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="hero-slide">
+        <img src="assets/img/prica1.jpg" alt="Podrum Vinum Academicuma">
+      </div>
+    </div>
+    <div class="hero-slider-dots" id="heroSliderDots" aria-hidden="true"></div>
     <div class="hero-gradient" aria-hidden="true"></div>
 
     <div class="mobile-hero-menu" id="menuToggleMobile" aria-label="Meni" aria-expanded="false" role="button" tabindex="0">
@@ -249,9 +265,24 @@
   <section class="story" id="nasa-prica">
     <div class="story-row">
       <div class="story-text">
+        <span class="story-label">Naša priča</span>
         <h2>Od vizije podno Papuka do<br class="desktop-break">prepoznatljivog vinskog potpisa</h2>
         <p>Vinum Academium nastaje 2004. godine iz želje da se bogato znanje o vinogradarstvu spoji s neukroćenom ljepotom i potencijalom slavonskog podneblja.</p>
         <p>Ono što je započelo kao odvažna vizija na osunčanim padinama podno Papuka, kroz godine neumornog i predanog rada izraslo je u prepoznatljivu vinariju u kojoj se tradicija ne samo čuva, nego i nadograđuje. Svaki korak u našem razvoju bio je vođen poštovanjem prema zavičaju i željom da stvorimo vina koja će ponosno predstavljati svoj kraj na svakom stolu.</p>
+        <div class="story-stats">
+          <div class="story-stat">
+            <span class="story-stat-num">2004.</span>
+            <span class="story-stat-label">Godina osnutka</span>
+          </div>
+          <div class="story-stat">
+            <span class="story-stat-num">8 ha</span>
+            <span class="story-stat-label">Površina vinograda</span>
+          </div>
+          <div class="story-stat">
+            <span class="story-stat-num">220–240 m</span>
+            <span class="story-stat-label">Nadmorska visina</span>
+          </div>
+        </div>
       </div>
       <div class="story-image"></div>
     </div>
@@ -314,6 +345,10 @@
             <span class="terroir-box-num">01</span>
             <span class="terroir-box-dot" aria-hidden="true"></span>
           </div>
+          <div class="terroir-box-media">
+            <!-- Zamijeni src stvarnom slikom ili gifom -->
+            <img src="assets/img/povrsina.jpg" alt="">
+          </div>
           <div class="terroir-box-text">
             <h3>Površina</h3>
             <p>Vinograd obuhvaća 8 hektara pažljivo održavanih nasada na južnim padinama Papuka. Ovakva površina omogućuje potpunu posvećenost detaljima i ručnu berbu.</p>
@@ -324,6 +359,10 @@
           <div class="terroir-box-top">
             <span class="terroir-box-num">02</span>
             <span class="terroir-box-dot" aria-hidden="true"></span>
+          </div>
+          <div class="terroir-box-media">
+            <!-- Zamijeni src stvarnom slikom ili gifom -->
+            <img src="assets/img/nadmorska-visina.jpg" alt="">
           </div>
           <div class="terroir-box-text">
             <h3>Nadmorska visina</h3>
@@ -336,6 +375,10 @@
             <span class="terroir-box-num">03</span>
             <span class="terroir-box-dot" aria-hidden="true"></span>
           </div>
+          <div class="terroir-box-media">
+            <!-- Zamijeni src stvarnom slikom ili gifom -->
+            <img src="assets/img/sastav-tla.jpg" alt="">
+          </div>
           <div class="terroir-box-text">
             <h3>Sastav tla</h3>
             <p>Tlo se sastoji od specifičnog pseudogleja prožetog bogatim kamenitim skeletom. Duboko korijenje upija minerale iz kamena dajući vinu prepoznatljivu eleganciju.</p>
@@ -346,6 +389,10 @@
           <div class="terroir-box-top">
             <span class="terroir-box-num">04</span>
             <span class="terroir-box-dot" aria-hidden="true"></span>
+          </div>
+          <div class="terroir-box-media">
+            <!-- Zamijeni src stvarnom slikom ili gifom -->
+            <img src="assets/img/dron_1.png" alt="">
           </div>
           <div class="terroir-box-text">
             <h3>Položaj</h3>
@@ -826,6 +873,54 @@
       slika.onerror = pokreni;
       slika.src = 'assets/img/pocetnaslika1.jpg';
       setTimeout(pokreni, 2500);
+    })();
+  </script>
+
+  <script>
+    // Hero slajder: kruzi kroz slajdove (slika ili video) u hero fotografiji.
+    // Za dodavanje novog slajda dovoljno je u HTML-u dodati jos jedan
+    // .hero-slide (s <img> ili <video>) - skripta ga sama prihvaca.
+    (function(){
+      var wrap = document.getElementById('heroSlider');
+      if (!wrap) return;
+      var slajdovi = Array.prototype.slice.call(wrap.querySelectorAll('.hero-slide'));
+      if (slajdovi.length < 2) return;
+
+      var tockeWrap = document.getElementById('heroSliderDots');
+      var tocke = [];
+      if (tockeWrap){
+        slajdovi.forEach(function(_, i){
+          var tocka = document.createElement('button');
+          tocka.type = 'button';
+          tocka.className = 'hero-slider-dot' + (i === 0 ? ' is-active' : '');
+          tocka.setAttribute('aria-label', 'Prikaži slajd ' + (i + 1));
+          tocka.addEventListener('click', function(){
+            idiNa(i);
+            resetirajTajmer();
+          });
+          tockeWrap.appendChild(tocka);
+          tocke.push(tocka);
+        });
+      }
+
+      var trenutni = 0;
+      var TRAJANJE = 6000;
+      var tajmer;
+
+      function idiNa(i){
+        slajdovi[trenutni].classList.remove('is-active');
+        if (tocke[trenutni]) tocke[trenutni].classList.remove('is-active');
+        trenutni = (i + slajdovi.length) % slajdovi.length;
+        slajdovi[trenutni].classList.add('is-active');
+        if (tocke[trenutni]) tocke[trenutni].classList.add('is-active');
+      }
+
+      function resetirajTajmer(){
+        clearInterval(tajmer);
+        tajmer = setInterval(function(){ idiNa(trenutni + 1); }, TRAJANJE);
+      }
+
+      resetirajTajmer();
     })();
   </script>
 
