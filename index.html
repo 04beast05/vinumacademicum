@@ -430,7 +430,7 @@
       <div class="final-section-top">
         <div class="final-section-heading">
           <h2>@vinumacademicum</h2>
-          <p>Otkrijte kako teku pripreme za berbu, zavirite u atmosferu s degustacija i među prva saznajte sve o novim berbama i posebnim izdanjima.</p>
+          <p>Zavirite u atmosferu iz kušaonice, vinskog podruma i među prvima saznajte sve novosti i posebna izdanja.</p>
           <div class="final-socials" aria-label="Društvene mreže">
             <a href="https://web.facebook.com/p/Vinum-Academicum-61573366985197/?_rdc=1&amp;_rdr" target="_blank" rel="noopener" class="final-social icon-fb" aria-label="Facebook">f</a>
             <a href="https://www.instagram.com/vinumacademicum/" target="_blank" rel="noopener" class="final-social instagram" aria-label="Instagram">
@@ -518,7 +518,7 @@
           <div class="footer-col">
             <h3>Kontakt</h3>
             <a href="tel:+38534621621">+385 (0)34 621 621</a>
-            <a href="mailto:vinumacademicum@gmail.com">vinumacademicum@gmail.com</a>
+            <a href="mailto:imalcic@ftrr.hr">imalcic@ftrr.hr</a>
       </div>
         </div>
 
@@ -996,17 +996,23 @@
 
 
   <!-- ---------- POP-UP: POJEDINACNO VINO ---------- -->
-  <div class="wine-modal" id="wineModal" aria-hidden="true" role="dialog" aria-modal="true">
-    <div class="wine-modal-inner">
-      <button class="wine-modal-close" type="button" id="wineModalClose" aria-label="Zatvori">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5 L19 19 M19 5 L5 19" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
-      </button>
+<div class="wine-modal" id="wineModal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="wine-modal-inner">
+    <button class="wine-modal-close" type="button" id="wineModalClose" aria-label="Zatvori">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 5 L19 19 M19 5 L5 19"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1"
+          stroke-linecap="round"/>
+      </svg>
+    </button>
 
-      <div class="wine-modal-photo">
-        <img id="wineModalImg" src="" alt="">
-      </div>
+    <div class="wine-modal-photo">
+      <img id="wineModalImg" src="" alt="">
+    </div>
 
-      <div class="wine-modal-body">
+    <div class="wine-modal-body">
       <span class="wine-modal-label" id="wineModalLabel"></span>
       <h2 class="wine-modal-title" id="wineModalTitle"></h2>
       <p class="wine-modal-desc" id="wineModalDesc"></p>
@@ -1015,183 +1021,726 @@
       <div class="wine-modal-price" id="wineModalPrice"></div>
 
       <div id="wineModalBlocks" class="wine-acc-list"></div>
-      </div>
     </div>
   </div>
+</div>
 
 
-  <script>
-    // Pop-up s podacima o pojedinom vinu.
-    // Naziv, cijena i fotografija se citaju iz same kartice, pa su uvijek
-    // uskladjeni s onim sto pise u kolekciji. Ostalo dolazi iz PODACI mape.
-    (function(){
-      var modal = document.getElementById('wineModal');
-      var kartice = Array.prototype.slice.call(document.querySelectorAll('.wine-card'));
-      if (!modal || !kartice.length) return;
+<script>
+  // Pop-up s podacima o pojedinom vinu.
+  // Naziv, cijena i fotografija citaju se iz same kartice,
+  // dok ostali podaci dolaze iz PODACI mape.
+  (function(){
 
-      var OPIS = 'Ugodno svježe vino svijetle slamnato-žute boje s izraženim voćnim i cvjetnim aromama jabuke, breskve i livadnog cvijeća. U ustima je skladno i dobrog tijela, uz ugodne kiseline i karakterističnu blagu gorčinu na završetku.';
-      var POSLUZIVANJE = 'Za puni uživajući doživljaj najbolje ga je poslužiti na temperaturi od 10 do 12 °C. Otvaranje boce nekoliko minuta prije rastočenja u klasične čaše u obliku tulipana omogućit će primarnim voćnim i cvjetnim aromama da se u potpunosti otvore.';
-      var GASTRO = 'Izvrsno pratiće jelima od bijelog mesa, teletini pod pekom i finim ribljim specijalitetima. Njezina svježina i uravnotežene kiseline sjajno prate kremaste tjestenine, tradicijske slavonske nareske te odabrane polutvrde sireve.';
+    var modal = document.getElementById('wineModal');
+    var kartice = Array.prototype.slice.call(
+      document.querySelectorAll('.wine-card')
+    );
 
-      function vino(vrsta, godina, vol, kolicina, tip, opis){
-        return {
-          vrsta: vrsta, godina: godina, vol: vol, kolicina: kolicina, tip: tip,
-          opis: opis || OPIS,
-          blokovi: [
-            ['Gastro preporuka', GASTRO],
-            ['Temperatura i posluživanje', POSLUZIVANJE],
-            ['Potencijal starenja', POSLUZIVANJE],
-            ['Uvjeti čuvanja', POSLUZIVANJE]
-          ]
-        };
-      }
+    if (!modal || !kartice.length) return;
 
-      var PODACI = {
-        'Graševina':                 vino('Bijelo vino', '2024', '12,5% vol.', '0,75 L (750 ml)', 'Suho vino', 'Ugodno svježe vino, svijetle slamnato-žute boje. Na mirisu dosta voćnosti te cvjetnih nota, koji upućuje na svježu jabuku i donekle na breskvu, te ponešto livadnog cvijeća. U ustima dobro zaobljeno, skladno, dobra tijela s dobrom kiselosti te na kraju s ugodnom blagom gorčinom koja je karakteristična za sortu Graševina.'),
-        'Kumovo Pinot Sivi':         vino('Bijelo vino', '2022', '12,5% vol.', '0,75 L (750 ml)', 'Suho vino', 'Slamnato žute boje s blagim odsjajom narančaste boje. Ugodnog je sortnog mirisa, s isprepletenim notama jabuke, kruške i nektarine. Vino je živahno i zrelo. Okus je pun i zaobljen, pomalo slankasto, ugodne svježine i postojanosti.'),
-        'Dolce Aurea':               vino('Kupaža bijelih vina', '2024', '11,5% vol.', '0,75 L (750 ml)', 'Poluslatko vino', 'Vino je svijetlo žute boje. Mirisom bogato s naglašenim notama svježeg i zrelog voća. U okusu je izrazito puno, ugodno, poluslatko i svježe. S obzirom na svoju slatkoću idealna je slastica za posebne prilike.'),
-        'Graševina Academia':        vino('Bijelo vino', '2022', '13,0% vol.', '0,75 L (750 ml)', 'Suho vino', 'Slamnato žute boje s blagom zelenkastom nijansom. Miris upućuje na zelenu jabuku, limun i limetu koji savršeno prate vaniliju uz nježni dodir slavonske hrastovine. Vino u ustima daje raskoš svježine u kombinaciji sa nježnom slasti, kremasto i zaobljeno, a opet moćnoga tijela i dugog postojanja.'),
-        'Sauvignon':                 vino('Bijelo vino', '2025', '12,5% vol.', '0,75 L (750 ml)', 'Suho vino'),
-        'Rudina':                    vino('Bijelo vino', '2025', '11,5% vol.', '1 L (1000 ml)',  'Suho vino'),
-        'Merlot':                    vino('Crno vino',   '2021', '13,0% vol.', '0,75 L (750 ml)', 'Suho vino', 'Vino koje dolazi sa južnog obronka parka prirode Papuk, maceracijom dobiva intenzivno rubin crvenu boju. Ugodnog mirisa sušenih šljiva, crnog ribiza i prezrelih jagoda. Karakterističnog okusa za Merlot sa jakim alkoholom te zaobljenih tanina, suho vino. Dozrijevanje se odvilo u hrastovim bačvama.'),
-        'Cabernet Sauvignon':        vino('Crno vino',   '',     '13,0% vol.', '0,75 L (750 ml)', 'Suho vino', 'Grožđe za ovo vino proizvedeno je na 350 metara nadmorske visine, na južnim padinama parka prirode Papuk. Vino tamne rubin boje popraćeno intenzivnim mirisima koji asociraju na crni ribizli, kupinu i borovnicu te crvenu sušenu papriku. Snažno, a opet kremasto u ustima gdje skladno dolazi do izražaja Barrique okusom vanilije i dima.'),
-        'Pinot Crni':                vino('Crno vino',   '',     '12,5% vol.', '0,75 L (750 ml)', 'Suho vino', 'Vino je tamne rubinsko crvene boje s ugodnom voćnosti u kojoj se ističu mirisi kupine, jagoda i ribizla. S obzirom na odležavanje u barriqueu upotpunjuje se kremastim i ugodno zaobljenim taninskim okusom.'),
-        'Syrah':                     vino('Crno vino',   '',     '13,0% vol.', '0,75 L (750 ml)', 'Suho vino', 'Vrhunsko vino tamne, crveno ljubičaste boje te snažne strukture. Intenzivnog mirisa koji snažno upućuje na zrele kupine i crni ribizli te pikantnost crnog papra i kave. U ustima bogat, pun skladan, a opet svjež i snažan. Arome crne čokolade, vanilije i ugodnog utiska Barriqua.'),
-        'Muškat Žuti':               vino('Bijelo vino', '2025', '11,5% vol.', '0,5 L (500 ml)',  'Poluslatko vino', 'Svjetlo žute boje, izraženog voćnog muškatnog i cvjetnog mirisa sa naglaskom na miris bazge. U ustima vino je umjereno slatko s puno svježine i balansirajućih kiselina. Tijelom je više na strani laganih vina. Dojam koji dobivamo na nepcu i okusi koji se razvijaju vrlo su podudarani mirisnoj aromatici vina, vino ima dug završetak.'),
-        'Chardonnay':                vino('Bijelo vino', '2011', '11,0% vol.', '0,375 L (375 ml)','Slatko vino', 'Moćnik među našim bijelim vinima koji svojom tamno slamnato žutom bojom dominira u čaši. Njegovan je dvanaest mjeseci na finom talogu u bačvama slavonskog hrasta. Harmoničan spoj voćnih aroma i drveta daje poseban ugođaj za Vaša osjetila mirisa i okusa. Moćnog alkohola koji se savršeno uklopio mirisima i okusima.'),
-        'Pinot Crni Izborna Berba':  vino('Crno vino',   '2018', '12,0% vol.', '0,5 L (500 ml)',  'Slatko vino', 'Slatko vino koje se svojom osobnošću ističe od drugih vina. Zanimljivog mirisa prezrelog voća i sušenih grožđica, a na nepce iznenađuje svojom slatkoćom i punoćom. Živahnog karaktera i dugog postojanja, te snažnog alkohola.'),
-        'Graševina Ledena berba':          vino('Bijelo vino', '2011', '10,5% vol.', '0,375 L (375 ml)','Slatko vino')
+
+    /*
+      ---------------------------------------------------------
+      PODACI O VINIMA
+      ---------------------------------------------------------
+      Svako vino ima:
+      - vrstu
+      - godinu
+      - alkohol
+      - kolicinu
+      - tip
+      - originalni enoloski opis
+      - gastro preporuku
+      - temperaturu i posluživanje
+      - uvjete čuvanja
+
+      "Potencijal starenja" je u potpunosti uklonjen.
+    */
+
+    function vino(
+      vrsta,
+      godina,
+      vol,
+      kolicina,
+      tip,
+      opis,
+      gastro,
+      posluzivanje,
+      cuvanje
+    ){
+      return {
+        vrsta: vrsta,
+        godina: godina,
+        vol: vol,
+        kolicina: kolicina,
+        tip: tip,
+        opis: opis,
+
+        blokovi: [
+          ['Gastro preporuka', gastro],
+          ['Temperatura i posluživanje', posluzivanje],
+          ['Uvjeti čuvanja', cuvanje]
+        ]
       };
+    }
 
-      var el = {
-        img:    document.getElementById('wineModalImg'),
-        label:  document.getElementById('wineModalLabel'),
-        title:  document.getElementById('wineModalTitle'),
-        desc:   document.getElementById('wineModalDesc'),
-        badges: document.getElementById('wineModalBadges'),
-        price:  document.getElementById('wineModalPrice'),
-        blocks: document.getElementById('wineModalBlocks')
-      };
 
-      var trenutno = 0;
+    var PODACI = {
 
-      function prikazi(i){
-        trenutno = (i + kartice.length) % kartice.length;
-        var kartica = kartice[trenutno];
-        var slika = kartica.querySelector('img');
-        var naziv = kartica.querySelector('.wine-name');
-        var cijena = kartica.querySelector('.wine-price');
-        naziv = naziv ? naziv.textContent.trim() : '';
-        var p = PODACI[naziv] || vino('Vino', '', '', '', '');
 
-        el.img.src = slika ? slika.getAttribute('src') : '';
-        el.img.alt = naziv;
-        el.label.textContent = p.vrsta;
-        el.title.textContent = p.godina ? (naziv + ' ' + p.godina) : naziv;
-        el.desc.textContent = p.opis;
-        el.price.textContent = cijena ? cijena.textContent.trim() : '';
+      /* =====================================================
+         GRAŠEVINA
+         ===================================================== */
 
-        el.badges.innerHTML = '';
-        [p.vol, p.kolicina, p.tip].forEach(function(t){
-          if (!t) return;
-          var span = document.createElement('span');
-          span.className = 'wine-modal-badge';
-          span.textContent = t;
-          el.badges.appendChild(span);
-        });
+      'Graševina': vino(
+        'Bijelo vino',
+        '2024',
+        '12,5% vol.',
+        '0,75 L (750 ml)',
+        'Suho vino',
 
-        el.blocks.innerHTML = '';
-        p.blokovi.forEach(function(b){
-          var stavka = document.createElement('div');
-          stavka.className = 'wine-acc';
+        'Ugodno svježe vino, svijetle slamnato-žute boje. Na mirisu dosta voćnosti te cvjetnih nota, koji upućuje na svježu jabuku i donekle na breskvu, te ponešto livadnog cvijeća. U ustima dobro zaobljeno, skladno, dobra tijela s dobrom kiselosti te na kraju s ugodnom blagom gorčinom koja je karakteristična za sortu Graševina. ',
 
-          var glava = document.createElement('button');
-          glava.type = 'button';
-          glava.className = 'wine-acc-head';
-          glava.setAttribute('aria-expanded', 'false');
+        'Izvrsno prati riječnu i morsku ribu, bijelo meso, kremaste tjestenine, slavonske nareske i polutvrde sireve.',
 
-          var naslov = document.createElement('span');
-          naslov.textContent = b[0];
-          var plus = document.createElement('span');
-          plus.className = 'wine-acc-plus';
-          plus.setAttribute('aria-hidden', 'true');
-          glava.appendChild(naslov);
-          glava.appendChild(plus);
+        'Poslužiti na 10–12 °C, u čaši za bijela vina kako bi se voćne i cvjetne arome što bolje izrazile.',
 
-          var tijelo = document.createElement('div');
-          tijelo.className = 'wine-acc-body';
-          var par = document.createElement('p');
-          par.textContent = b[1];
-          tijelo.appendChild(par);
+        'Čuvati na tamnom i hladnom mjestu, pri stabilnoj temperaturi, bez izravnog svjetla, vibracija i većih temperaturnih oscilacija.'
+      ),
 
-          glava.addEventListener('click', function(){
-            var vecOtvoren = stavka.classList.contains('is-open');
 
-            // zatvori sve; time je uvijek najvise jedan opis otvoren
-            Array.prototype.forEach.call(el.blocks.querySelectorAll('.wine-acc.is-open'), function(d){
+      /* =====================================================
+         KUMOVO PINOT SIVI
+         ===================================================== */
+
+      'Kumovo Pinot Sivi': vino(
+        'Bijelo vino',
+        '2022',
+        '12,5% vol.',
+        '0,75 L (750 ml)',
+        'Suho vino',
+
+        'Slamnato žute boje s blagim odsjajom narančaste boje. Ugodnog je sortnog mirisa, s isprepletenim notama jabuke, kruške i nektarine. Vino je živahno i zrelo. Okus je pun i zaobljen, pomalo slankasto, ugodne svježine i postojanosti.',
+
+        'Odlično prati ribu, morske plodove, bijelo meso i perad, kao i kremaste tjestenine i jela s blagim voćnim elementima.',
+
+        'Poslužiti na 10–12 °C, u čaši za bijela vina kako bi se otvorile voćne i mineralne note.',
+
+        'Čuvati na tamnom i hladnom mjestu, pri stabilnoj temperaturi, bez izravnog svjetla i vibracija.'
+      ),
+
+
+      /* =====================================================
+         DOLCE AUREA
+         ===================================================== */
+
+      'Dolce Aurea': vino(
+        'Kupaža bijelih vina',
+        '2024',
+        '11,5% vol.',
+        '0,75 L (750 ml)',
+        'Poluslatko vino',
+
+        'Vino je svijetlo žute boje. Mirisom bogato s naglašenim notama svježeg i zrelog voća. U okusu je izrazito puno, ugodno, poluslatko i svježe. S obzirom na svoju slatkoću idealna je slastica za posebne prilike.',
+
+        'Posebno dobro pristaje uz voćne tartove, lagane kremaste deserte, cheesecake, plave sireve i lagano začinjena jela.',
+
+        'Poslužiti na 8–10 °C, u manjoj čaši za aromatična i slatka bijela vina.',
+
+        'Čuvati na tamnom i hladnom mjestu, pri stabilnoj temperaturi, zaštićeno od izravnog svjetla i naglih promjena temperature.'
+      ),
+
+
+      /* =====================================================
+         GRAŠEVINA ACADEMIA
+         ===================================================== */
+
+      'Graševina Academia': vino(
+        'Bijelo vino',
+        '2022',
+        '13,0% vol.',
+        '0,75 L (750 ml)',
+        'Suho vino',
+
+        'Slamnato žute boje s blagom zelenkastom nijansom. Miris upućuje na zelenu jabuku, limun i limetu koji savršeno prate vaniliju uz nježni dodir slavonske hrastovine. Vino u ustima daje raskoš svježine u kombinaciji sa nježnom slasti, kremasto i zaobljeno, a opet moćnoga tijela i dugog postojanja.',
+
+        'Odlično prati pečenu i masniju ribu, piletinu i puretinu u kremastim umacima, tjestenine s gljivama te zrelije polutvrde sireve.',
+
+        'Poslužiti na 10–12 °C, u čaši za punija bijela vina kako bi se razvile voćne, kremaste i drvene note.',
+
+        'Čuvati na tamnom i hladnom mjestu, pri stabilnoj temperaturi, bez izravnog svjetla i vibracija.'
+      ),
+
+
+      /* =====================================================
+         SAUVIGNON
+         ===================================================== */
+
+      'Sauvignon': vino(
+        'Bijelo vino',
+        '2025',
+        '12,5% vol.',
+        '0,75 L (750 ml)',
+        'Suho vino',
+
+        'Vino svijetle zelenkasto-žute boje, izražajnog i svježeg mirisa u kojem se ističu prepoznatljive sortne arome zelenog voća, citrusa i svježeg bilja. Na nepcu je živahno, svježe i skladno, s izraženim kiselinama koje mu daju lakoću i pitkost. Završetak je čist, svjež i postojan, s karakterističnom aromatikom Sauvignona koja ostaje dugo prisutna.',
+
+        'Odlično prati kozji sir, svježe salate, bijelu ribu, školjke i lagana jela s biljnim umacima.',
+
+        'Poslužiti na 8–10 °C, u čaši za aromatična bijela vina.',
+
+        'Čuvati na tamnom i hladnom mjestu, pri stabilnoj temperaturi, bez izravnog svjetla i većih temperaturnih oscilacija.'
+      ),
+
+
+      /* =====================================================
+         RUDINA
+         ===================================================== */
+
+      'Rudina': vino(
+        'Bijelo vino',
+        '2025',
+        '11,5% vol.',
+        '1 L (1000 ml)',
+        'Suho vino',
+
+        '',
+
+        'Pristaje uz hladna predjela, bijelu ribu, piletinu, lagane tjestenine i svježe sireve.',
+
+        'Poslužiti na 10–12 °C, dobro rashlađeno, u čaši za bijela vina.',
+
+        'Čuvati na tamnom i hladnom mjestu, pri stabilnoj temperaturi, bez izravnog svjetla i većih temperaturnih oscilacija.'
+      ),
+
+
+      /* =====================================================
+         MERLOT
+         ===================================================== */
+
+      'Merlot': vino(
+        'Crno vino',
+        '2021',
+        '13,0% vol.',
+        '0,75 L (750 ml)',
+        'Suho vino',
+
+        'Vino koje dolazi sa južnog obronka parka prirode Papuk, maceracijom dobiva intenzivno rubin crvenu boju. Ugodnog mirisa sušenih šljiva, crnog ribiza i prezrelih jagoda. Karakterističnog okusa za Merlot sa jakim alkoholom te zaobljenih tanina, suho vino. Dozrijevanje se odvilo u hrastovim bačvama.',
+
+        'Odlično prati sporo pečenu govedinu, svinjsko pečenje, jela s gljivama, junetinu u umaku i zrelije polutvrde sireve.',
+
+        'Poslužiti na 16–18 °C. Preporučuje se kratko prozračivanje prije posluživanja.',
+
+        'Čuvati na tamnom i hladnom mjestu, pri stabilnoj temperaturi i bez izlaganja svjetlu, vibracijama i naglim promjenama temperature.'
+      ),
+
+
+      /* =====================================================
+         CABERNET SAUVIGNON
+         ===================================================== */
+
+      'Cabernet Sauvignon': vino(
+        'Crno vino',
+        '',
+        '13,0% vol.',
+        '0,75 L (750 ml)',
+        'Suho vino',
+
+        'Grožđe za ovo vino proizvedeno je na 350 metara nadmorske visine, na južnim padinama parka prirode Papuk. Vino tamne rubin boje popraćeno intenzivnim mirisima koji asociraju na crni ribizli, kupinu i borovnicu te crvenu sušenu papriku. Snažno, a opet kremasto u ustima gdje skladno dolazi do izražaja Barrique okusom vanilije i dima. ',
+
+        'Posebno dobro pristaje uz odreske s grilla, junetinu, divljač, jela s paprom, sporo pečena mesa i intenzivne zrele sireve.',
+
+        'Poslužiti na 16–18 °C. Preporučuje se prozračivanje prije posluživanja kako bi se vino otvorilo.',
+
+        'Čuvati na tamnom i hladnom mjestu, pri stabilnoj temperaturi, bez izravnog svjetla, vibracija i većih temperaturnih oscilacija.'
+      ),
+
+
+      /* =====================================================
+         PINOT CRNI
+         ===================================================== */
+
+      'Pinot Crni': vino(
+        'Crno vino',
+        '',
+        '12,5% vol.',
+        '0,75 L (750 ml)',
+        'Suho vino',
+
+        'Vino je tamne rubinsko crvene boje s ugodnom voćnosti u kojoj se ističu mirisi kupine, jagoda i ribizla. S obzirom na odležavanje u barriqueu upotpunjuje se kremastim i ugodno zaobljenim taninskim okusom. ',
+
+        'Odlično prati patku, pečenu perad, svinjetinu, losos, jela s gljivama i suhomesnate proizvode.',
+
+        'Poslužiti na 14–16 °C, u široj čaši za crna vina. Kratko prozračivanje može dodatno otvoriti voćne i barrique note.',
+
+        'Čuvati na tamnom i hladnom mjestu, pri stabilnoj temperaturi, bez izlaganja svjetlu i vibracijama.'
+      ),
+
+
+      /* =====================================================
+         SYRAH
+         ===================================================== */
+
+      'Syrah': vino(
+        'Crno vino',
+        '',
+        '13,0% vol.',
+        '0,75 L (750 ml)',
+        'Suho vino',
+
+        'Vrhunsko vino tamne, crveno ljubičaste boje te snažne strukture. Intenzivnog mirisa koji snažno upućuje na zrele kupine i crni ribizli te pikantnost crnog papra i kave. U ustima bogat, pun skladan, a opet svjež i snažan. Arome crne čokolade, vanilije i ugodnog utiska Barriqua. ',
+
+        'Odlično prati janjeće pečenje, odreske s grilla, sporo pečeno meso, pikantnija mesna jela i snažne zrele sireve.',
+
+        'Poslužiti na 16–18 °C, uz prozračivanje prije posluživanja kako bi se otvorile arome crnog voća, začina i barriquea.',
+
+        'Čuvati na tamnom i hladnom mjestu, pri stabilnoj temperaturi, bez izravnog svjetla, vibracija i naglih promjena temperature.'
+      ),
+
+
+      /* =====================================================
+         MUŠKAT ŽUTI
+         ===================================================== */
+
+      'Muškat Žuti': vino(
+        'Bijelo vino',
+        '2025',
+        '11,5% vol.',
+        '0,5 L (500 ml)',
+        'Poluslatko vino',
+
+        'Svjetlo žute boje, izraženog voćnog muškatnog i cvjetnog mirisa sa naglaskom na miris bazge. U ustima vino je umjereno slatko s puno svježine i balansirajućih kiselina. Tijelom je više na strani laganih vina. Dojam koji dobivamo na nepcu i okusi koji se razvijaju vrlo su podudarani mirisnoj aromatici vina, vino ima dug završetak.',
+
+        'Odlično prati voćne kolače, deserte s bademima i orašastim plodovima, svježe voće, kremaste deserte i aromatične sireve.',
+
+        'Poslužiti na 8–10 °C, u manjoj aromatičnoj čaši koja naglašava muškatne i cvjetne note.',
+
+        'Čuvati na tamnom i hladnom mjestu, pri stabilnoj temperaturi, bez izravnog svjetla i većih temperaturnih oscilacija.'
+      ),
+
+
+      /* =====================================================
+         CHARDONNAY
+         ===================================================== */
+
+      'Chardonnay': vino(
+        'Bijelo vino',
+        '2011',
+        '11,0% vol.',
+        '0,375 L (375 ml)',
+        'Slatko vino',
+
+        'Moćnik među našim bijelim vinima koji svojom tamno slamnato žutom bojom dominira u čaši. Njegovan je dvanaest mjeseci na finom talogu u bačvama Slavonskog hrasta. Harmoničan spoj voćnih aroma i drveta daje poseban ugođaj za Vaša osjetila mirisa i okusa. Moćnog alkohola koji se savršeno uklopio mirisima i okusima.',
+
+        'Odlično pristaje uz crème brûlée, karamelizirane voćne deserte, deserte s orašastim plodovima te plemenite sireve poput Roqueforta.',
+
+        'Poslužiti na 10–12 °C, u manjoj čaši za slatka i desertna vina.',
+
+        'Čuvati na tamnom i hladnom mjestu, pri stabilnoj temperaturi, bez izravnog svjetla, vibracija i naglih promjena temperature.'
+      ),
+
+
+      /* =====================================================
+         PINOT CRNI IZBORNA BERBA
+         ===================================================== */
+
+      'Pinot Crni Izborna Berba': vino(
+        'Crno vino',
+        '2018',
+        '12,0% vol.',
+        '0,5 L (500 ml)',
+        'Slatko vino',
+
+        'Slatko vino koje se svojom osobnošću ističe od drugih vina. Zanimljivog mirisa prezrelog voća i sušenih grožđica, a na nepce iznenađuje svojom slatkoćom i punoćom. Živahnog karaktera i dugog postojanja, te snažnog alkohola.  ',
+
+        'Posebno dobro pristaje uz deserte od tamne čokolade, čokoladne torte, deserte od šumskog voća, suho voće i intenzivne plemenite sireve.',
+
+        'Poslužiti na 12–14 °C, u manjoj čaši za slatka vina kako bi se naglasile voćne i slatkaste arome.',
+
+        'Čuvati na tamnom i hladnom mjestu, pri stabilnoj temperaturi, bez izravnog svjetla i vibracija.'
+      ),
+
+
+      /* =====================================================
+         GRAŠEVINA LEDENA BERBA
+         ===================================================== */
+
+      'Graševina Ledena berba': vino(
+        'Bijelo vino',
+        '2011',
+        '10,5% vol.',
+        '0,375 L (375 ml)',
+        'Slatko vino',
+
+        'Vino izražajne zlatno-ambarne boje, bogatog i slojevitog mirisa u kojem se isprepliću note prezrelog voća, sušenih grožđica i meda. Na nepcu je raskošno, puno i izraženo slatko, ali uz dovoljno svježine koja mu daje ravnotežu. Dugog i postojanog završetka, s karakterom koji se razvija u svakom gutljaju.',
+
+        'Odlično pristaje uz voćne tartove, cheesecake, deserte od marelice i breskve, sladoled te plemenite sireve poput Stiltona.',
+
+        'Poslužiti dobro rashlađeno na 7–10 °C, u manjoj čaši za slatka i desertna vina.',
+
+        'Čuvati na tamnom i hladnom mjestu, pri stabilnoj temperaturi, bez izravnog svjetla, vibracija i temperaturnih oscilacija.'
+      )
+
+    };
+
+
+    /* =====================================================
+       ELEMENTI POP-UPA
+       ===================================================== */
+
+    var el = {
+      img: document.getElementById('wineModalImg'),
+      label: document.getElementById('wineModalLabel'),
+      title: document.getElementById('wineModalTitle'),
+      desc: document.getElementById('wineModalDesc'),
+      badges: document.getElementById('wineModalBadges'),
+      price: document.getElementById('wineModalPrice'),
+      blocks: document.getElementById('wineModalBlocks')
+    };
+
+
+    var trenutno = 0;
+
+
+    /* =====================================================
+       PRIKAZ VINA
+       ===================================================== */
+
+    function prikazi(i){
+
+      trenutno = (i + kartice.length) % kartice.length;
+
+      var kartica = kartice[trenutno];
+
+      var slika = kartica.querySelector('img');
+
+      var nazivEl = kartica.querySelector('.wine-name');
+
+      var cijena = kartica.querySelector('.wine-price');
+
+      var naziv = nazivEl
+        ? nazivEl.textContent.trim()
+        : '';
+
+      var p = PODACI[naziv] || vino(
+        'Vino',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        ''
+      );
+
+
+      /* Slika */
+
+      el.img.src = slika
+        ? slika.getAttribute('src')
+        : '';
+
+      el.img.alt = naziv;
+
+
+      /* Osnovni podaci */
+
+      el.label.textContent = p.vrsta;
+
+      el.title.textContent = p.godina
+        ? (naziv + ' ' + p.godina)
+        : naziv;
+
+      el.desc.textContent = p.opis;
+
+      el.price.textContent = cijena
+        ? cijena.textContent.trim()
+        : '';
+
+
+      /* Badgeovi */
+
+      el.badges.innerHTML = '';
+
+      [
+        p.vol,
+        p.kolicina,
+        p.tip
+      ].forEach(function(t){
+
+        if (!t) return;
+
+        var span = document.createElement('span');
+
+        span.className = 'wine-modal-badge';
+
+        span.textContent = t;
+
+        el.badges.appendChild(span);
+      });
+
+
+      /* =====================================================
+         AKORDEONI
+         ===================================================== */
+
+      el.blocks.innerHTML = '';
+
+      p.blokovi.forEach(function(b){
+
+        var stavka = document.createElement('div');
+
+        stavka.className = 'wine-acc';
+
+
+        /* Header */
+
+        var glava = document.createElement('button');
+
+        glava.type = 'button';
+
+        glava.className = 'wine-acc-head';
+
+        glava.setAttribute(
+          'aria-expanded',
+          'false'
+        );
+
+
+        var naslov = document.createElement('span');
+
+        naslov.textContent = b[0];
+
+
+        var plus = document.createElement('span');
+
+        plus.className = 'wine-acc-plus';
+
+        plus.setAttribute(
+          'aria-hidden',
+          'true'
+        );
+
+
+        glava.appendChild(naslov);
+
+        glava.appendChild(plus);
+
+
+        /* Tijelo */
+
+        var tijelo = document.createElement('div');
+
+        tijelo.className = 'wine-acc-body';
+
+
+        var par = document.createElement('p');
+
+        par.textContent = b[1];
+
+
+        tijelo.appendChild(par);
+
+
+        /* Klik */
+
+        glava.addEventListener('click', function(){
+
+          var vecOtvoren =
+            stavka.classList.contains('is-open');
+
+
+          /*
+            Zatvori sve ostale.
+            Uvijek je otvoren maksimalno jedan opis.
+          */
+
+          Array.prototype.forEach.call(
+            el.blocks.querySelectorAll('.wine-acc.is-open'),
+            function(d){
+
               d.classList.remove('is-open');
-              d.querySelector('.wine-acc-body').style.maxHeight = '';
-              d.querySelector('.wine-acc-head').setAttribute('aria-expanded', 'false');
-            });
 
-            if (!vecOtvoren){
-              stavka.classList.add('is-open');
-              tijelo.style.maxHeight = tijelo.scrollHeight + 'px';
-              glava.setAttribute('aria-expanded', 'true');
+              d.querySelector(
+                '.wine-acc-body'
+              ).style.maxHeight = '';
 
-              // Kad se opis rasklopi, zna zavrsiti ispod ruba zaslona.
-              // Ceka se kraj animacije (0.4s) pa se stavka dovuce u vidljivi
-              // dio; 'nearest' pomice tek onoliko koliko treba, a ako je vec
-              // cijela vidljiva ne mice nista.
-              setTimeout(function(){
-                stavka.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-              }, 430);
+              d.querySelector(
+                '.wine-acc-head'
+              ).setAttribute(
+                'aria-expanded',
+                'false'
+              );
             }
-          });
+          );
 
-          stavka.appendChild(glava);
-          stavka.appendChild(tijelo);
-          el.blocks.appendChild(stavka);
+
+          if (!vecOtvoren){
+
+            stavka.classList.add('is-open');
+
+            tijelo.style.maxHeight =
+              tijelo.scrollHeight + 'px';
+
+            glava.setAttribute(
+              'aria-expanded',
+              'true'
+            );
+
+
+            /*
+              Nakon animacije dovuci otvoreni
+              element u vidljivi dio ekrana.
+            */
+
+            setTimeout(function(){
+
+              stavka.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+              });
+
+            }, 430);
+          }
+
         });
 
-        modal.scrollTop = 0;
-        var tijelo = modal.querySelector('.wine-modal-body');
-        if (tijelo) tijelo.scrollTop = 0;
-      }
 
-      function otvori(i){
-        prikazi(i);
-        modal.classList.add('is-open');
-        modal.setAttribute('aria-hidden', 'false');
-        document.documentElement.style.overflowY = 'hidden';
-      }
+        stavka.appendChild(glava);
 
-      function zatvori(){
-        modal.classList.remove('is-open');
-        modal.setAttribute('aria-hidden', 'true');
-        document.documentElement.style.overflowY = '';
-      }
+        stavka.appendChild(tijelo);
 
-      kartice.forEach(function(kartica, i){
-        kartica.style.cursor = 'pointer';
+        el.blocks.appendChild(stavka);
 
-        kartica.addEventListener('click', function(){
-          // klik nakon povlacenja karusela ne otvara pop-up
-          if (kartica.closest('.is-dragging')) return;
-          otvori(i);
-        });
       });
 
-      document.getElementById('wineModalClose').addEventListener('click', zatvori);
 
-      document.addEventListener('keydown', function(e){
-        if (!modal.classList.contains('is-open')) return;
-        if (e.key === 'Escape') zatvori();
-        if (e.key === 'ArrowLeft') prikazi(trenutno - 1);
-        if (e.key === 'ArrowRight') prikazi(trenutno + 1);
+      /* Reset scrolla */
+
+      modal.scrollTop = 0;
+
+      var tijeloModal =
+        modal.querySelector('.wine-modal-body');
+
+      if (tijeloModal){
+        tijeloModal.scrollTop = 0;
+      }
+
+    }
+
+
+    /* =====================================================
+       OTVARANJE
+       ===================================================== */
+
+    function otvori(i){
+
+      prikazi(i);
+
+      modal.classList.add('is-open');
+
+      modal.setAttribute(
+        'aria-hidden',
+        'false'
+      );
+
+      document.documentElement.style.overflowY =
+        'hidden';
+    }
+
+
+    /* =====================================================
+       ZATVARANJE
+       ===================================================== */
+
+    function zatvori(){
+
+      modal.classList.remove('is-open');
+
+      modal.setAttribute(
+        'aria-hidden',
+        'true'
+      );
+
+      document.documentElement.style.overflowY =
+        '';
+    }
+
+
+    /* =====================================================
+       KLIK NA KARTICE
+       ===================================================== */
+
+    kartice.forEach(function(kartica, i){
+
+      kartica.style.cursor = 'pointer';
+
+
+      kartica.addEventListener('click', function(){
+
+        /*
+          Klik nakon povlačenja karusela
+          ne otvara pop-up.
+        */
+
+        if (
+          kartica.closest('.is-dragging')
+        ) return;
+
+
+        otvori(i);
+
       });
-    })();
-  </script>
+
+    });
+
+
+    /* =====================================================
+       CLOSE BUTTON
+       ===================================================== */
+
+    document
+      .getElementById('wineModalClose')
+      .addEventListener(
+        'click',
+        zatvori
+      );
+
+
+    /* =====================================================
+       TIPKOVNICA
+       ===================================================== */
+
+    document.addEventListener(
+      'keydown',
+      function(e){
+
+        if (
+          !modal.classList.contains('is-open')
+        ) return;
+
+
+        if (e.key === 'Escape'){
+          zatvori();
+        }
+
+
+        if (e.key === 'ArrowLeft'){
+          prikazi(trenutno - 1);
+        }
+
+
+        if (e.key === 'ArrowRight'){
+          prikazi(trenutno + 1);
+        }
+
+      }
+    );
+
+  })();
+</script>
 
 
 </body>
