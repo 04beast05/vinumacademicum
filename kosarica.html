@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Košarica – Vinum Academicum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/kontakt.css">
+<link rel="stylesheet" href="assets/kosarica.css">
+<style>
+  
+</style>
+</head>
+<body>
+
+  <!-- ---------- PROVJERA PUNOLJETNOSTI ---------- -->
+  <div class="age-gate" id="ageGate" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Provjera punoljetnosti">
+    <div class="age-gate-inner">
+      <img class="age-gate-logo" src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
+      <h2 class="age-gate-title">Jeste li punoljetni?</h2>
+      <p class="age-gate-text">Ova stranica sadrži informacije o alkoholnim proizvodima te je namijenjena isključivo osobama starijim od 18 godina.</p>
+      <div class="age-gate-actions">
+        <button type="button" class="btn btn-light age-gate-btn" id="ageGateYes">Da, imam 18+</button>
+        <button type="button" class="btn btn-outline age-gate-btn" id="ageGateNo">Ne</button>
+      </div>
+      <p class="age-gate-note">Zabranjeno konzumiranje alkohola mlađima od 18 godina. Konzumirajte odgovorno.</p>
+    </div>
+  </div>
+  <div class="age-gate-blocked" id="ageGateBlocked" aria-hidden="true">
+    <div class="age-gate-blocked-inner">
+      <p>Nažalost, sadržaj ove stranice namijenjen je isključivo osobama starijim od 18 godina.</p>
+      <a href="https://www.google.com/" class="btn btn-light age-gate-btn">Napusti stranicu</a>
+    </div>
+  </div>
+  <script>
+    // Provjera punoljetnosti: prikazuje se jednom po posjeti (sessionStorage),
+    // pa se ne ponavlja pri prelasku izmedju index.html i kontakt.html u istoj sjednici.
+    (function(){
+      var KLJUC = 'va_punoljetan';
+      var gate = document.getElementById('ageGate');
+      var blocked = document.getElementById('ageGateBlocked');
+      if (!gate) return;
+
+      var vecPotvrdjeno = false;
+      try { vecPotvrdjeno = sessionStorage.getItem(KLJUC) === '1'; } catch (e) {}
+
+      if (vecPotvrdjeno){
+        gate.style.display = 'none';
+        return;
+      }
+
+      document.documentElement.style.overflowY = 'hidden';
+      requestAnimationFrame(function(){
+        gate.classList.add('is-open');
+        gate.setAttribute('aria-hidden', 'false');
+      });
+
+      var da = document.getElementById('ageGateYes');
+      var ne = document.getElementById('ageGateNo');
+
+      da.addEventListener('click', function(){
+        try { sessionStorage.setItem(KLJUC, '1'); } catch (e) {}
+        gate.classList.remove('is-open');
+        gate.setAttribute('aria-hidden', 'true');
+        document.documentElement.style.overflowY = '';
+        setTimeout(function(){ gate.style.display = 'none'; }, 450);
+      });
+
+      ne.addEventListener('click', function(){
+        gate.style.display = 'none';
+        if (blocked){
+          blocked.classList.add('is-open');
+          blocked.setAttribute('aria-hidden', 'false');
+        }
+      });
+    })();
+  </script>
+
+  <nav class="navbar">
+    <a href="#" class="nav-logo" aria-label="Vinum Academicum">
+      <img src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
+    </a>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="index.html#nasa-prica">Naša priča</a></li>
+        <li><a href="index.html#terroir">Terroir</a></li>
+        <li><a href="index.html#kolekcija-vina">Kolekcija vina</a></li>
+      </ul>
+      <div class="menu-icon" id="menuToggle" aria-label="Meni" aria-expanded="false" role="button" tabindex="0">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="site-menu" id="siteMenu" aria-hidden="true">
+    <div class="site-menu-overlay" data-menu-close></div>
+    <div class="site-menu-panel">
+      <div class="site-menu-head">
+        <a href="#" class="site-menu-logo" aria-label="Vinum Academicum">
+          <img src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
+        </a>
+        <button class="site-menu-close" type="button" aria-label="Zatvori izbornik" data-menu-close>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5 L19 19 M19 5 L5 19" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <nav class="site-menu-links">
+        <a href="index.html#nasa-prica" data-menu-close>Naša priča</a>
+        <a href="index.html#terroir" data-menu-close>Terroir</a>
+        <a href="index.html#kolekcija-vina" data-menu-close>Kolekcija vina</a>
+        <a href="index.html#rudinske-glave" data-menu-close>Rudinske glave</a>
+        <a href="index.html#posjetite-nas" data-menu-close>Posjetite nas</a>
+        <a href="index.html#posjetite-nas" data-menu-close>Novosti</a>
+        <a href="kosarica.html" data-menu-close>Košarica</a>
+      </nav>
+
+      <div class="site-menu-bottom">
+        <a href="kosarica.html" class="site-menu-cta">Kupi naše vino</a>
+        <div class="site-menu-socials">
+          <a href="https://web.facebook.com/p/Vinum-Academicum-61573366985197/?_rdc=1&amp;_rdr" target="_blank" rel="noopener" aria-label="Facebook" class="icon-fb">f</a>
+          <a href="https://www.instagram.com/vinumacademicum/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <mask id="ig-mask-menu"><rect x="0" y="0" width="24" height="24" fill="#fff"/><circle cx="12" cy="12" r="4" fill="#000"/><circle cx="17.3" cy="6.7" r="1.2" fill="#000"/></mask>
+              <rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor" mask="url(#ig-mask-menu)"/>
+              <circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <section class="kontakt-hero">
+    <div class="kontakt-hero-copy">
+      <h1>Košarica</h1>
+      <p>Odaberite količine i pošaljite upit. Ponudu vam potvrđujemo osobno, bez online plaćanja.</p>
+    </div>
+  </section>
+
+  <section class="va-cart">
+    <div class="va-steps" id="vaSteps">
+      <div class="va-step"><span>01</span><h4>Odaberite vina</h4><p>U kolekciji vina odaberite pojedinačne boce ili kartone (6 boca) i dodajte ih u košaricu.</p></div>
+      <div class="va-step"><span>02</span><h4>Pošaljite upit</h4><p>Unesite podatke o naručitelju (fizička ili pravna osoba) i pošaljite upit. Plaćanje se ne obavlja online.</p></div>
+      <div class="va-step"><span>03</span><h4>Potvrda i preuzimanje</h4><p>Javljamo vam se s ponudom. Manje količine preuzimate osobno na FTRR-u u Požegi, a dostavu dogovaramo za veće količine.</p></div>
+    </div>
+
+    <div class="va-cart-inner" id="vaMain">
+      <div class="va-cart-left">
+        <h2>Vaša narudžba</h2>
+        <div id="vaItems"></div>
+        <div class="va-empty" id="vaEmpty" hidden>
+          <p>Vaša košarica je trenutno prazna.</p>
+          <a class="va-btn" href="index.html#kolekcija-vina">Pregledaj kolekciju vina</a>
+        </div>
+
+        <div class="va-contact-box">
+          <h3>Veće narudžbe</h3>
+          <p>Za narudžbe većih količina (od 12 boca, odnosno 2 kartona), poklon-pakete, dostavu ili poslovnu suradnju, molimo kontaktirajte vinariju izravno. Rado ćemo vam pripremiti ponudu po mjeri.</p>
+          <a href="tel:+385995226371">+385 99 522 6371</a>
+          <a href="mailto:imalcic@ftrr.hr">imalcic@ftrr.hr</a>
+          <a href="kontakt.html" style="margin-top:12px;text-decoration:underline">Kontakt stranica →</a>
+        </div>
+      </div>
+
+      <div class="va-cart-right" id="vaCheckout" hidden>
+        <div class="va-summary"><div><span>Ukupno</span><div id="vaSumBoca" style="font-size:13px;margin-top:6px;color:#1a1a1a"></div></div><strong id="vaSumTotal"></strong></div>
+
+        <div class="va-note">
+          <b>Preuzimanje:</b> manje količine možete preuzeti osobno na <b>FTRR-u (Fakultet za turizam i ruralni razvoj), Vukovarska 17, Požega</b>. Karton = 6 boca. Narudžba nije konačna dok je vinarija ne potvrdi: najprije vas kontaktiramo i dogovaramo detalje. Plaćanje se ne obavlja online.
+        </div>
+
+        <form class="va-form" id="vaForm" novalidate>
+          <h3>Podaci o naručitelju</h3>
+          <div class="va-tip" role="group" aria-label="Vrsta naručitelja">
+            <button type="button" class="is-on" data-t="individual" aria-pressed="true">Fizička osoba</button>
+            <button type="button" data-t="company" aria-pressed="false">Pravna osoba</button>
+          </div>
+
+          <div class="va-group" data-only="company" hidden>
+            <div class="va-field"><input type="text" name="company_name" placeholder="Naziv tvrtke*" maxlength="160" autocomplete="organization" aria-label="Naziv tvrtke" disabled></div>
+            <div class="va-field"><input type="text" name="oib" placeholder="OIB*" inputmode="numeric" maxlength="11" aria-label="OIB" disabled></div>
+            <div class="va-field"><input type="text" name="street_address" placeholder="Adresa sjedišta – ulica i kućni broj*" maxlength="160" autocomplete="street-address" aria-label="Ulica i kućni broj" disabled></div>
+            <div class="va-row">
+              <div class="va-field"><input type="text" name="postal_code" placeholder="Poštanski broj*" inputmode="numeric" maxlength="5" autocomplete="postal-code" aria-label="Poštanski broj" disabled></div>
+              <div class="va-field"><input type="text" name="city" placeholder="Grad*" maxlength="80" autocomplete="address-level2" aria-label="Grad" disabled></div>
+            </div>
+          </div>
+
+          <div class="va-row">
+            <div class="va-field"><input type="text" name="first_name" placeholder="Ime*" maxlength="60" autocomplete="given-name" aria-label="Ime"></div>
+            <div class="va-field"><input type="text" name="last_name" placeholder="Prezime*" maxlength="60" autocomplete="family-name" aria-label="Prezime"></div>
+          </div>
+          <div class="va-field"><input type="tel" name="phone" placeholder="Broj mobitela*" maxlength="30" autocomplete="tel" aria-label="Broj mobitela"></div>
+          <div class="va-field"><input type="email" name="email" placeholder="E-mail adresa*" maxlength="120" autocomplete="email" aria-label="E-mail adresa"></div>
+
+          <h3 style="margin-top:10px">Način preuzimanja*</h3>
+          <label class="va-radio"><input type="radio" name="pickup_method" value="ftrr" id="vaPickupFtrr" checked><span>Osobno preuzimanje na FTRR-u u Požegi</span></label>
+          <label class="va-radio"><input type="radio" name="pickup_method" value="delivery" id="vaPickupBig"><span>Dostava / preuzimanje po dogovoru (veće količine). Detalje dostave ili preuzimanja naknadno ćemo dogovoriti s vama.</span></label>
+
+          <textarea name="customer_note" placeholder="Napomena uz narudžbu (neobavezno)" maxlength="1500" aria-label="Napomena uz narudžbu"></textarea>
+          <div class="va-hp" aria-hidden="true"><input type="text" name="web" tabindex="-1" autocomplete="off"></div>
+
+          <div class="va-field"><label class="va-check"><input type="checkbox" name="gdpr"><span>Pročitao/la sam i prihvaćam <a href="gdpr.html" target="_blank" rel="noopener">Politiku privatnosti</a> i pristajem na obradu navedenih osobnih podataka u svrhu obrade ove narudžbe.*</span></label></div>
+          <p class="va-legal">Polja označena zvjezdicom su obvezna. Zabranjena prodaja alkohola osobama mlađima od 18 godina.</p>
+          <button class="va-send" type="submit">Nastavi na pregled narudžbe</button>
+        </form>
+
+        <div class="va-review" id="vaReview" hidden>
+          <div class="va-rv-body"></div>
+          <div class="va-msg" id="vaMsg" role="alert"></div>
+          <button class="va-send" id="vaSend" type="button">Pošalji narudžbu</button>
+          <button class="va-send va-send-ghost" id="vaBack" type="button">← Uredi podatke</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="va-done" id="vaDone" hidden>
+      <h2>Hvala na upitu</h2>
+      <p>Vaš upit je zaprimljen. Javit ćemo vam se uskoro s ponudom i dogovorom o preuzimanju.</p>
+      <div class="va-broj">Broj narudžbe: <span id="vaDoneBroj"></span></div>
+      <a class="va-btn" href="index.html">Povratak na početnu</a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="site-footer-main">
+      <div class="site-footer-inner">
+        <a href="index.html" class="footer-logo" aria-label="Vinum Academicum">
+          <img src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
+        </a>
+        <p class="site-footer-tagline">Vina rođena na obroncima Papuka, stvorena strpljenjem, s poštovanjem prema zavičaju i vremenu.</p>
+
+        <nav class="footer-nav">
+          <a href="index.html#nasa-prica">Naša priča</a>
+          <a href="index.html#terroir">Terroir</a>
+          <a href="index.html#kolekcija-vina">Kolekcija vina</a>
+          <a href="index.html#rudinske-glave">Rudinske glave</a>
+          <a href="kosarica.html">Košarica</a>
+          <a href="kontakt.html">Kontakt</a>
+          <a href="gdpr.html">Privatnost</a>
+        </nav>
+
+        <div class="footer-line"></div>
+
+        <div class="site-footer-grid">
+          <div class="footer-col">
+            <h3>Vinum Academium d.o.o.</h3>
+            <p>Vukovarska 17, 34000 Požega</p>
+            <p>OIB: 68603972982</p>
+          </div>
+
+          <div class="footer-col">
+            <h3>Podrum</h3>
+            <p>34335 Podgorje</p>
+            <p>45.4447° N, 17.7836° E</p>
+          </div>
+
+          <div class="footer-col">
+            <h3>Kontakt</h3>
+            <a href="tel:+38534621621">+385 (0)34 621 621</a>
+            <a href="mailto:imalcic@ftrr.hr">imalcic@ftrr.hr</a>
+          </div>
+        </div>
+
+        <div class="site-footer-socials">
+          <a href="https://web.facebook.com/p/Vinum-Academicum-61573366985197/?_rdc=1&amp;_rdr" target="_blank" rel="noopener" aria-label="Facebook" class="icon-fb">f</a>
+          <a href="https://www.instagram.com/vinumacademicum/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <mask id="ig-mask-footer"><rect x="0" y="0" width="24" height="24" fill="#fff"/><circle cx="12" cy="12" r="4" fill="#000"/><circle cx="17.3" cy="6.7" r="1.2" fill="#000"/></mask>
+              <rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor" mask="url(#ig-mask-footer)"/>
+              <circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="site-footer-bottom">
+      <span>© Vinum Academicum. Sva prava pridržana.</span>
+      <span>Zabranjeno konzumiranje alkohola mlađima od 18 godina. Konzumirajte odgovorno.</span>
+    </div>
+  </footer>
+
+  <script>
+    // Otvaranje/zatvaranje glavnog izbornika
+    (function(){
+      var toggles = [document.getElementById('menuToggle'), document.getElementById('menuToggleMobile')].filter(Boolean);
+      var menu = document.getElementById('siteMenu');
+      if (!toggles.length || !menu) return;
+
+      function openMenu(){
+        menu.classList.add('is-open');
+        toggles.forEach(function(t){
+          t.classList.add('is-open');
+          t.setAttribute('aria-expanded', 'true');
+        });
+        menu.setAttribute('aria-hidden', 'false');
+        // Zaključavanje se stavlja na <html>, ne na <body>. Body ima height:100%,
+        // pa mu je "overflow:hidden" rezao sadržaj -> visina dokumenta pala bi na
+        // jedan ekran i stranica bi skočila na vrh (i ostala ondje nakon zatvaranja).
+        document.documentElement.style.overflowY = 'hidden';
+      }
+      function closeMenu(){
+        menu.classList.remove('is-open');
+        toggles.forEach(function(t){
+          t.classList.remove('is-open');
+          t.setAttribute('aria-expanded', 'false');
+        });
+        menu.setAttribute('aria-hidden', 'true');
+        document.documentElement.style.overflowY = '';
+      }
+      function toggleMenu(){
+        if (menu.classList.contains('is-open')) closeMenu(); else openMenu();
+      }
+
+      toggles.forEach(function(toggle){
+        toggle.addEventListener('click', toggleMenu);
+        toggle.addEventListener('keydown', function(e){
+          if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleMenu(); }
+        });
+      });
+
+      // Klik bilo gdje po otvorenom izborniku ga zatvara - i po zatamnjenoj
+      // pozadini i po samom panelu. Na mobitelu panel pokriva cijeli zaslon,
+      // pa bez ovoga nije bilo nacina za izlazak osim klika na neku poveznicu.
+      menu.addEventListener('click', closeMenu);
+
+      document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape') closeMenu();
+      });
+    })();
+  </script>
+
+  
+
+
+<script src="assets/kosarica.js"></script>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Politika privatnosti – Vinum Academicum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/kontakt.css">
+<link rel="stylesheet" href="assets/kosarica.css">
+<style>
+
+  .gdpr{ padding:70px 40px 110px; font-family:'DM Sans',sans-serif; color:#1a1a1a; }
+  .gdpr-inner{ max-width:860px; margin:0 auto; }
+  .gdpr .upd{ font-size:12px; letter-spacing:1px; text-transform:uppercase; color:#868686; margin-bottom:34px; }
+  .gdpr .lead{ font-size:15px; line-height:1.85; color:#494949; margin-bottom:40px; }
+  .gdpr nav.toc{ border-top:1px solid #1a1a1a; border-bottom:1px solid #e5e5e5; padding:22px 0; margin-bottom:56px; columns:2; column-gap:40px; }
+  .gdpr nav.toc a{ display:block; font-size:13px; line-height:2; color:#1a1a1a; text-decoration:none; }
+  .gdpr nav.toc a:hover{ text-decoration:underline; }
+  .gdpr h2{ font-family:'Cormorant Garamond',serif; font-weight:500; font-size:30px; line-height:1.2; margin:54px 0 16px; scroll-margin-top:100px; }
+  .gdpr h2 small{ font:500 12px 'DM Sans',sans-serif; color:#868686; letter-spacing:1px; margin-right:12px; }
+  .gdpr p, .gdpr li{ font-size:14px; line-height:1.85; color:#494949; }
+  .gdpr p{ margin-bottom:14px; }
+  .gdpr ul{ margin:0 0 16px 20px; }
+  .gdpr li{ margin-bottom:6px; }
+  .gdpr a{ color:#1a1a1a; text-underline-offset:3px; }
+  .gdpr .box{ background:#F8F8F8; padding:22px 26px; margin:18px 0 22px; }
+  .gdpr .box p{ margin:0; line-height:2; color:#1a1a1a; }
+  .gdpr .tbl{ overflow-x:auto; margin:14px 0 22px; }
+  .gdpr table{ width:100%; border-collapse:collapse; min-width:560px; }
+  .gdpr th{ text-align:left; font:500 11px 'DM Sans',sans-serif; letter-spacing:1px; text-transform:uppercase; color:#686868; padding:12px 14px 12px 0; border-bottom:1px solid #1a1a1a; }
+  .gdpr td{ font-size:13px; line-height:1.7; color:#494949; padding:14px 14px 14px 0; border-bottom:1px solid #e5e5e5; vertical-align:top; }
+  @media (max-width:720px){ .gdpr{ padding:40px 20px 80px; } .gdpr nav.toc{ columns:1; } .gdpr h2{ font-size:25px; } }
+
+</style>
+</head>
+<body>
+
+  <!-- ---------- PROVJERA PUNOLJETNOSTI ---------- -->
+  <div class="age-gate" id="ageGate" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Provjera punoljetnosti">
+    <div class="age-gate-inner">
+      <img class="age-gate-logo" src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
+      <h2 class="age-gate-title">Jeste li punoljetni?</h2>
+      <p class="age-gate-text">Ova stranica sadrži informacije o alkoholnim proizvodima te je namijenjena isključivo osobama starijim od 18 godina.</p>
+      <div class="age-gate-actions">
+        <button type="button" class="btn btn-light age-gate-btn" id="ageGateYes">Da, imam 18+</button>
+        <button type="button" class="btn btn-outline age-gate-btn" id="ageGateNo">Ne</button>
+      </div>
+      <p class="age-gate-note">Zabranjeno konzumiranje alkohola mlađima od 18 godina. Konzumirajte odgovorno.</p>
+    </div>
+  </div>
+  <div class="age-gate-blocked" id="ageGateBlocked" aria-hidden="true">
+    <div class="age-gate-blocked-inner">
+      <p>Nažalost, sadržaj ove stranice namijenjen je isključivo osobama starijim od 18 godina.</p>
+      <a href="https://www.google.com/" class="btn btn-light age-gate-btn">Napusti stranicu</a>
+    </div>
+  </div>
+  <script>
+    // Provjera punoljetnosti: prikazuje se jednom po posjeti (sessionStorage),
+    // pa se ne ponavlja pri prelasku izmedju index.html i kontakt.html u istoj sjednici.
+    (function(){
+      var KLJUC = 'va_punoljetan';
+      var gate = document.getElementById('ageGate');
+      var blocked = document.getElementById('ageGateBlocked');
+      if (!gate) return;
+
+      var vecPotvrdjeno = false;
+      try { vecPotvrdjeno = sessionStorage.getItem(KLJUC) === '1'; } catch (e) {}
+
+      if (vecPotvrdjeno){
+        gate.style.display = 'none';
+        return;
+      }
+
+      document.documentElement.style.overflowY = 'hidden';
+      requestAnimationFrame(function(){
+        gate.classList.add('is-open');
+        gate.setAttribute('aria-hidden', 'false');
+      });
+
+      var da = document.getElementById('ageGateYes');
+      var ne = document.getElementById('ageGateNo');
+
+      da.addEventListener('click', function(){
+        try { sessionStorage.setItem(KLJUC, '1'); } catch (e) {}
+        gate.classList.remove('is-open');
+        gate.setAttribute('aria-hidden', 'true');
+        document.documentElement.style.overflowY = '';
+        setTimeout(function(){ gate.style.display = 'none'; }, 450);
+      });
+
+      ne.addEventListener('click', function(){
+        gate.style.display = 'none';
+        if (blocked){
+          blocked.classList.add('is-open');
+          blocked.setAttribute('aria-hidden', 'false');
+        }
+      });
+    })();
+  </script>
+
+  <nav class="navbar">
+    <a href="#" class="nav-logo" aria-label="Vinum Academicum">
+      <img src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
+    </a>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="index.html#nasa-prica">Naša priča</a></li>
+        <li><a href="index.html#terroir">Terroir</a></li>
+        <li><a href="index.html#kolekcija-vina">Kolekcija vina</a></li>
+      </ul>
+      <div class="menu-icon" id="menuToggle" aria-label="Meni" aria-expanded="false" role="button" tabindex="0">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="site-menu" id="siteMenu" aria-hidden="true">
+    <div class="site-menu-overlay" data-menu-close></div>
+    <div class="site-menu-panel">
+      <div class="site-menu-head">
+        <a href="#" class="site-menu-logo" aria-label="Vinum Academicum">
+          <img src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
+        </a>
+        <button class="site-menu-close" type="button" aria-label="Zatvori izbornik" data-menu-close>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5 L19 19 M19 5 L5 19" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <nav class="site-menu-links">
+        <a href="index.html#nasa-prica" data-menu-close>Naša priča</a>
+        <a href="index.html#terroir" data-menu-close>Terroir</a>
+        <a href="index.html#kolekcija-vina" data-menu-close>Kolekcija vina</a>
+        <a href="index.html#rudinske-glave" data-menu-close>Rudinske glave</a>
+        <a href="index.html#posjetite-nas" data-menu-close>Posjetite nas</a>
+        <a href="index.html#posjetite-nas" data-menu-close>Novosti</a>
+        <a href="kosarica.html" data-menu-close>Košarica</a>
+      </nav>
+
+      <div class="site-menu-bottom">
+        <a href="kosarica.html" class="site-menu-cta">Kupi naše vino</a>
+        <div class="site-menu-socials">
+          <a href="https://web.facebook.com/p/Vinum-Academicum-61573366985197/?_rdc=1&amp;_rdr" target="_blank" rel="noopener" aria-label="Facebook" class="icon-fb">f</a>
+          <a href="https://www.instagram.com/vinumacademicum/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <mask id="ig-mask-menu"><rect x="0" y="0" width="24" height="24" fill="#fff"/><circle cx="12" cy="12" r="4" fill="#000"/><circle cx="17.3" cy="6.7" r="1.2" fill="#000"/></mask>
+              <rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor" mask="url(#ig-mask-menu)"/>
+              <circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <section class="kontakt-hero">
+    <div class="kontakt-hero-copy">
+      <h1>Politika privatnosti</h1>
+      <p>Informacije o obradi osobnih podataka sukladno Uredbi (EU) 2016/679 (GDPR) i Zakonu o provedbi Opće uredbe o zaštiti podataka.</p>
+    </div>
+  </section>
+
+  <section class="gdpr">
+    <div class="gdpr-inner">
+      <p class="upd">Zadnje ažuriranje: 14. listopada 2026.</p>
+      <p class="lead">Vinum Academicum d.o.o. poštuje vašu privatnost. U ovom dokumentu objašnjavamo koje osobne podatke prikupljamo putem ove web stranice (obrazac za kontakt i košarica za upit o narudžbi vina), zašto ih obrađujemo, koliko dugo ih čuvamo, s kim ih dijelimo i koja prava imate.</p>
+
+      <nav class="toc" aria-label="Sadržaj">
+        <a href="#voditelj">1. Voditelj obrade</a>
+        <a href="#podaci">2. Podaci koje prikupljamo</a>
+        <a href="#svrhe">3. Svrhe i pravne osnove</a>
+        <a href="#rokovi">4. Rok čuvanja</a>
+        <a href="#primatelji">5. Primatelji i izvršitelji obrade</a>
+        <a href="#trece">6. Prijenos izvan EU/EGP-a</a>
+        <a href="#prava">7. Vaša prava</a>
+        <a href="#sigurnost">8. Sigurnost podataka</a>
+        <a href="#kolacici">9. Kolačići i lokalna pohrana</a>
+        <a href="#maloljetnici">10. Maloljetne osobe</a>
+        <a href="#izmjene">11. Izmjene politike</a>
+      </nav>
+
+      <h2 id="voditelj"><small>01</small>Voditelj obrade</h2>
+      <div class="box"><p>
+        <strong>Vinum Academicum d.o.o.</strong><br>
+        Sjedište: Vukovarska ul. 17, 34000 Požega<br>
+        OIB: 68603972982<br>
+        E-pošta: <a href="mailto:imalcic@ftrr.hr">imalcic@ftrr.hr</a><br>
+        Telefon: <a href="tel:+385995226371">+385 99 522 6371</a>
+      </p></div>
+      <p>Sva pitanja o obradi osobnih podataka, kao i zahtjeve za ostvarivanje svojih prava, možete uputiti na gore navedene kontakte.</p>
+
+      <h2 id="podaci"><small>02</small>Podaci koje prikupljamo</h2>
+      <p>Prikupljamo isključivo podatke koje nam sami dostavite putem obrazaca na stranici:</p>
+      <ul>
+        <li><strong>Obrazac za kontakt:</strong> ime, prezime, adresa e-pošte, razlog javljanja i sadržaj poruke.</li>
+        <li><strong>Košarica / upit za narudžbu – fizičke osobe:</strong> ime, prezime, adresa e-pošte, broj mobitela, odabrani proizvodi i količine, način preuzimanja i neobvezna napomena.</li>
+        <li><strong>Košarica / upit za narudžbu – pravne osobe:</strong> naziv tvrtke, OIB, adresa sjedišta (ulica i kućni broj, poštanski broj, grad), ime i prezime osobe za kontakt, adresa e-pošte, broj mobitela, odabrani proizvodi i količine, način preuzimanja i neobvezna napomena.</li>
+        <li><strong>Podaci o obradi narudžbe:</strong> status narudžbe, interne napomene vinarije, povijest promjena statusa te evidencija slanja obavijesti e-poštom (vrsta poruke, primatelj, vrijeme i ishod slanja).</li>
+        <li><strong>Podatak o privoli:</strong> evidencija da ste prihvatili ovu Politiku privatnosti prilikom slanja upita te vrijeme zaprimanja upita.</li>
+      </ul>
+      <p>Na stranici ne naplaćujemo proizvode putem interneta i ne prikupljamo podatke o platnim karticama. Ne prikupljamo posebne kategorije osobnih podataka.</p>
+
+      <h2 id="svrhe"><small>03</small>Svrhe i pravne osnove obrade</h2>
+      <div class="tbl"><table>
+        <thead><tr><th>Svrha</th><th>Pravna osnova</th></tr></thead>
+        <tbody>
+          <tr><td>Odgovaranje na upit poslan putem obrasca za kontakt</td><td>Privola ispitanika (čl. 6. st. 1. t. (a) GDPR-a) te legitimni interes za komunikaciju s osobama koje nam se same obrate (t. (f))</td></tr>
+          <tr><td>Obrada upita za narudžbu vina, priprema i potvrda ponude, dogovor o preuzimanju ili dostavi</td><td>Poduzimanje radnji na zahtjev ispitanika prije sklapanja ugovora (čl. 6. st. 1. t. (b) GDPR-a)</td></tr>
+          <tr><td>Ispunjenje ugovora i računovodstvene, porezne i druge zakonske obveze, ako do kupoprodaje dođe</td><td>Poštovanje pravnih obveza voditelja obrade (čl. 6. st. 1. t. (c) GDPR-a)</td></tr>
+          <tr><td>Zaštita pravnih zahtjeva i sigurnost stranice (sprječavanje zlouporabe obrazaca)</td><td>Legitimni interes voditelja obrade (čl. 6. st. 1. t. (f) GDPR-a)</td></tr>
+        </tbody>
+      </table></div>
+      <p>Davanje podataka označenih zvjezdicom je dobrovoljno, ali bez njih nismo u mogućnosti obraditi vaš upit. Vaše podatke ne koristimo za izravni marketing niti za automatizirano donošenje odluka i profiliranje.</p>
+
+      <h2 id="rokovi"><small>04</small>Rok čuvanja</h2>
+      <ul>
+        <li><strong>Upiti i poruke koji ne rezultiraju narudžbom:</strong> čuvamo ih najdulje 24 mjeseca od zaprimanja, nakon čega se brišu.</li>
+        <li><strong>Narudžbe koje rezultiraju kupoprodajom:</strong> čuvamo ih onoliko dugo koliko to zahtijevaju propisi (osobito računovodstveni i porezni propisi), a nakon toga se brišu.</li>
+        <li><strong>Podaci o privoli:</strong> čuvaju se koliko i pripadajući upit.</li>
+      </ul>
+      <p>Stavke koje dodate u košaricu pohranjuju se samo u vašem pregledniku (vidi točku 9) i ne šalju se nama sve dok ne pošaljete upit.</p>
+
+      <h2 id="primatelji"><small>05</small>Primatelji i izvršitelji obrade</h2>
+      <p>Vaše podatke imaju pristup samo ovlaštene osobe voditelja obrade. Kako bismo omogućili rad stranice, koristimo pouzdane pružatelje usluga koji podatke obrađuju isključivo u naše ime i prema našim uputama, na temelju ugovora o obradi podataka (čl. 28. GDPR-a):</p>
+      <ul>
+        <li><strong>Supabase Inc.</strong> – pružatelj usluge baze podataka i autentifikacije administratora, u kojoj se pohranjuju narudžbe i povijest njihove obrade; podaci se pohranjuju na poslužiteljima u regiji Europske unije.</li>
+        <li><strong>Resend, Inc.</strong> – pružatelj usluge slanja e-pošte putem kojeg vinariji stiže obavijest o narudžbi, a vama potvrda primitka te, nakon dogovora, potvrda narudžbe.</li>
+        <li><strong>Pružatelj usluge elektroničke pošte i web-hostinga</strong> – za primanje poruka na adresu imalcic@ftrr.hr te za posluživanje ove stranice.</li>
+      </ul>
+      <p>Podatke ne prodajemo niti ustupamo trećim stranama u marketinške svrhe. Podatke možemo otkriti nadležnim tijelima samo ako smo na to zakonski obvezni.</p>
+
+      <h2 id="trece"><small>06</small>Prijenos izvan EU/EGP-a</h2>
+      <p>Pojedini pružatelji usluga (npr. Resend, Inc.) mogu imati sjedište ili infrastrukturu izvan Europskog gospodarskog prostora, osobito u Sjedinjenim Američkim Državama. U tom se slučaju prijenos obavlja uz odgovarajuće zaštitne mjere propisane GDPR-om, kao što su standardne ugovorne klauzule Europske komisije ili odluka o primjerenosti (EU-SAD Okvir za privatnost podataka), gdje je primjenjivo. Na zahtjev vam možemo dati dodatne informacije o primijenjenim zaštitnim mjerama.</p>
+
+      <h2 id="prava"><small>07</small>Vaša prava</h2>
+      <p>U odnosu na svoje osobne podatke imate sljedeća prava:</p>
+      <ul>
+        <li><strong>pravo na pristup</strong> (čl. 15.) – saznati obrađujemo li vaše podatke i dobiti njihovu kopiju;</li>
+        <li><strong>pravo na ispravak</strong> (čl. 16.) netočnih ili nepotpunih podataka;</li>
+        <li><strong>pravo na brisanje</strong> (čl. 17.) – „pravo na zaborav“, kada za obradu više ne postoji pravna osnova;</li>
+        <li><strong>pravo na ograničenje obrade</strong> (čl. 18.);</li>
+        <li><strong>pravo na prenosivost podataka</strong> (čl. 20.);</li>
+        <li><strong>pravo na prigovor</strong> (čl. 21.) obradi koja se temelji na legitimnom interesu;</li>
+        <li><strong>pravo na povlačenje privole</strong> (čl. 7. st. 3.) u bilo kojem trenutku, bez utjecaja na zakonitost obrade prije povlačenja.</li>
+      </ul>
+      <p>Zahtjev možete poslati na <a href="mailto:imalcic@ftrr.hr">imalcic@ftrr.hr</a>. Odgovorit ćemo vam bez nepotrebnog odgađanja, a najkasnije u roku od mjesec dana od primitka zahtjeva. Radi zaštite vaših podataka možemo zatražiti dodatne informacije potrebne za potvrdu vašeg identiteta.</p>
+      <p>Ako smatrate da se vaši podaci obrađuju protivno propisima, imate pravo podnijeti pritužbu nadzornom tijelu: <strong>Agencija za zaštitu osobnih podataka (AZOP)</strong>, Selska cesta 112a, 10000 Zagreb, <a href="https://azop.hr" target="_blank" rel="noopener">azop.hr</a>.</p>
+
+      <h2 id="sigurnost"><small>08</small>Sigurnost podataka</h2>
+      <p>Primjenjujemo odgovarajuće tehničke i organizacijske mjere zaštite: šifrirani prijenos podataka (HTTPS/TLS), pristup bazi podataka ograničen na ovlaštene osobe, zabranu javnog čitanja i upisa u bazu te validaciju unosa na poslužitelju. Unatoč tome, nijedan način prijenosa podataka internetom nije u potpunosti siguran, pa ne možemo jamčiti apsolutnu sigurnost.</p>
+
+      <h2 id="kolacici"><small>09</small>Kolačići i lokalna pohrana</h2>
+      <p>Ova stranica ne koristi analitičke, oglašivačke ni druge kolačiće za praćenje. Koristimo samo nužnu pohranu u vašem pregledniku:</p>
+      <ul>
+        <li><strong>sessionStorage (va_punoljetan):</strong> pamti da ste potvrdili punoljetnost tijekom trenutne posjete; briše se zatvaranjem preglednika.</li>
+        <li><strong>sessionStorage (va_obrazac_v1, va_idem_v1):</strong> privremeno čuva uneseno u obrazac narudžbe (kako ne biste ponovno upisivali podatke ako se vratite na prethodni korak) te tehnički identifikator koji sprječava dvostruko slanje iste narudžbe. Podaci ostaju samo u vašem pregledniku, brišu se zatvaranjem kartice ili nakon uspješnog slanja.</li>
+        <li><strong>localStorage (va_kosarica_v1):</strong> pamti sadržaj vaše košarice (odabrana vina i količine) kako ne biste izgubili odabir pri prelasku između stranica. Ne sadrži osobne podatke i možete ga obrisati u postavkama preglednika. Nakon uspješnog slanja narudžbe košarica se prazni.</li>
+      </ul>
+      <p>Stranica učitava web-fontove s poslužitelja Google Fonts (Google Ireland Ltd.), pri čemu Google može obraditi vašu IP adresu radi isporuke fonta. Poveznice na društvene mreže (Facebook, Instagram) vode na vanjske stranice čije politike privatnosti nismo u mogućnosti kontrolirati.</p>
+
+      <h2 id="maloljetnici"><small>10</small>Maloljetne osobe</h2>
+      <p>Stranica sadrži informacije o alkoholnim proizvodima i namijenjena je isključivo osobama starijim od 18 godina. Svjesno ne prikupljamo osobne podatke maloljetnih osoba. Ako saznamo da su nam dostavljeni takvi podaci, bez odgađanja ćemo ih izbrisati.</p>
+
+      <h2 id="izmjene"><small>11</small>Izmjene ove politike</h2>
+      <p>Ovu Politiku privatnosti možemo povremeno izmijeniti, osobito zbog promjena propisa ili usluga na stranici. Aktualna verzija uvijek je objavljena na ovoj stranici, uz datum zadnjeg ažuriranja.</p>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="site-footer-main">
+      <div class="site-footer-inner">
+        <a href="index.html" class="footer-logo" aria-label="Vinum Academicum">
+          <img src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
+        </a>
+        <p class="site-footer-tagline">Vina rođena na obroncima Papuka, stvorena strpljenjem, s poštovanjem prema zavičaju i vremenu.</p>
+
+        <nav class="footer-nav">
+          <a href="index.html#nasa-prica">Naša priča</a>
+          <a href="index.html#terroir">Terroir</a>
+          <a href="index.html#kolekcija-vina">Kolekcija vina</a>
+          <a href="index.html#rudinske-glave">Rudinske glave</a>
+          <a href="kosarica.html">Košarica</a>
+          <a href="kontakt.html">Kontakt</a>
+          <a href="gdpr.html">Privatnost</a>
+        </nav>
+
+        <div class="footer-line"></div>
+
+        <div class="site-footer-grid">
+          <div class="footer-col">
+            <h3>Vinum Academium d.o.o.</h3>
+            <p>Vukovarska 17, 34000 Požega</p>
+            <p>OIB: 68603972982</p>
+          </div>
+
+          <div class="footer-col">
+            <h3>Podrum</h3>
+            <p>34335 Podgorje</p>
+            <p>45.4447° N, 17.7836° E</p>
+          </div>
+
+          <div class="footer-col">
+            <h3>Kontakt</h3>
+            <a href="tel:+38534621621">+385 (0)34 621 621</a>
+            <a href="mailto:imalcic@ftrr.hr">imalcic@ftrr.hr</a>
+          </div>
+        </div>
+
+        <div class="site-footer-socials">
+          <a href="https://web.facebook.com/p/Vinum-Academicum-61573366985197/?_rdc=1&amp;_rdr" target="_blank" rel="noopener" aria-label="Facebook" class="icon-fb">f</a>
+          <a href="https://www.instagram.com/vinumacademicum/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <mask id="ig-mask-footer"><rect x="0" y="0" width="24" height="24" fill="#fff"/><circle cx="12" cy="12" r="4" fill="#000"/><circle cx="17.3" cy="6.7" r="1.2" fill="#000"/></mask>
+              <rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor" mask="url(#ig-mask-footer)"/>
+              <circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="site-footer-bottom">
+      <span>© Vinum Academicum. Sva prava pridržana.</span>
+      <span>Zabranjeno konzumiranje alkohola mlađima od 18 godina. Konzumirajte odgovorno.</span>
+    </div>
+  </footer>
+
+  <script>
+    // Otvaranje/zatvaranje glavnog izbornika
+    (function(){
+      var toggles = [document.getElementById('menuToggle'), document.getElementById('menuToggleMobile')].filter(Boolean);
+      var menu = document.getElementById('siteMenu');
+      if (!toggles.length || !menu) return;
+
+      function openMenu(){
+        menu.classList.add('is-open');
+        toggles.forEach(function(t){
+          t.classList.add('is-open');
+          t.setAttribute('aria-expanded', 'true');
+        });
+        menu.setAttribute('aria-hidden', 'false');
+        // Zaključavanje se stavlja na <html>, ne na <body>. Body ima height:100%,
+        // pa mu je "overflow:hidden" rezao sadržaj -> visina dokumenta pala bi na
+        // jedan ekran i stranica bi skočila na vrh (i ostala ondje nakon zatvaranja).
+        document.documentElement.style.overflowY = 'hidden';
+      }
+      function closeMenu(){
+        menu.classList.remove('is-open');
+        toggles.forEach(function(t){
+          t.classList.remove('is-open');
+          t.setAttribute('aria-expanded', 'false');
+        });
+        menu.setAttribute('aria-hidden', 'true');
+        document.documentElement.style.overflowY = '';
+      }
+      function toggleMenu(){
+        if (menu.classList.contains('is-open')) closeMenu(); else openMenu();
+      }
+
+      toggles.forEach(function(toggle){
+        toggle.addEventListener('click', toggleMenu);
+        toggle.addEventListener('keydown', function(e){
+          if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleMenu(); }
+        });
+      });
+
+      // Klik bilo gdje po otvorenom izborniku ga zatvara - i po zatamnjenoj
+      // pozadini i po samom panelu. Na mobitelu panel pokriva cijeli zaslon,
+      // pa bez ovoga nije bilo nacina za izlazak osim klika na neku poveznicu.
+      menu.addEventListener('click', closeMenu);
+
+      document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape') closeMenu();
+      });
+    })();
+  </script>
+
+  
+
+
+<script src="assets/kosarica.js"></script>
+</body>
+</html>
