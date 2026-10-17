@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Administracija – Vinum Academicum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- PRIJAVA -->
+<main class="auth" id="vLogin" hidden>
+  <form class="auth-card" id="fLogin" novalidate>
+    <div class="brand">Vinum Academicum</div>
+    <p class="sub">Administracija narudžbi</p>
+    <label>E-mail<input type="email" name="email" autocomplete="username" required></label>
+    <label>Lozinka<input type="password" name="password" autocomplete="current-password" required></label>
+    <div class="msg" id="mLogin" role="alert"></div>
+    <button class="btn" type="submit">Prijava</button>
+    <button class="link" type="button" id="bForgot">Zaboravljena lozinka?</button>
+  </form>
+</main>
+
+<!-- NOVA LOZINKA (obvezna pri prvoj prijavi i nakon oporavka) -->
+<main class="auth" id="vPass" hidden>
+  <form class="auth-card" id="fPass" novalidate>
+    <div class="brand">Vinum Academicum</div>
+    <p class="sub" id="passSub">Postavite novu lozinku</p>
+    <label>Nova lozinka (min. 12 znakova)<input type="password" name="p1" autocomplete="new-password" required></label>
+    <label>Ponovite lozinku<input type="password" name="p2" autocomplete="new-password" required></label>
+    <div class="msg" id="mPass" role="alert"></div>
+    <button class="btn" type="submit">Spremi lozinku</button>
+  </form>
+</main>
+
+<!-- APLIKACIJA -->
+<div id="vApp" hidden>
+  <header class="top">
+    <div class="brand">Vinum Academicum <span>Administracija</span></div>
+    <nav class="tabs" id="tabs">
+      <button data-tab="pregled" class="is-on">Pregled</button>
+      <button data-tab="narudzbe">Narudžbe</button>
+      <button data-tab="cijene">Cijene vina</button>
+    </nav>
+    <div class="who"><span id="whoEmail"></span><button class="link" id="bLogout">Odjava</button></div>
+  </header>
+
+  <main class="wrap">
+    <section id="tPregled">
+      <h1>Pregled</h1>
+      <div class="cards" id="cards"></div>
+      <h2>Najnovije narudžbe</h2>
+      <div id="recent"></div>
+    </section>
+
+    <section id="tNarudzbe" hidden>
+      <h1>Narudžbe</h1>
+      <div class="filters">
+        <input type="search" id="fSearch" placeholder="Pretraži: broj, ime, tvrtka, e-mail…">
+        <select id="fStatus"><option value="">Svi statusi</option><option value="pending">Nova</option><option value="contacted">Kontaktiran</option><option value="confirmed">Potvrđena</option><option value="rejected">Odbijena</option><option value="completed">Izvršena</option></select>
+        <label class="inl">Od <input type="date" id="fFrom"></label>
+        <label class="inl">Do <input type="date" id="fTo"></label>
+        <select id="fSort"><option value="desc">Najnovije prvo</option><option value="asc">Najstarije prvo</option></select>
+      </div>
+      <div id="list"></div>
+    </section>
+
+    <section id="tCijene" hidden>
+      <h1>Cijene vina</h1>
+      <p class="hint">Ove cijene vrijede za nove narudžbe i prikazuju se na stranici i u košarici. Prazno polje = „cijena prema ponudi“. Već zaprimljene narudžbe zadržavaju cijene iz trenutka narudžbe.</p>
+      <div id="products"></div>
+    </section>
+  </main>
+</div>
+
+<!-- DETALJI NARUDŽBE -->
+<aside class="drawer" id="drawer" hidden aria-modal="true" role="dialog" aria-labelledby="dTitle">
+  <div class="drawer-bg" data-close></div>
+  <div class="drawer-panel"><button class="x" data-close aria-label="Zatvori">×</button><div id="dBody"></div></div>
+</aside>
+
+<!-- MODAL -->
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true">
+  <div class="drawer-bg" data-mclose></div>
+  <div class="modal-box"><div id="mBody"></div></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
