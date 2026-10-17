@@ -1,0 +1,7 @@
+# Obje funkcije same provjeravaju pozivatelja (validacija, honeypot, rate limit / Supabase Auth + tablica admins),
+# pa JWT verifikacija na razini gatewaya nije potrebna (radi i s novim "publishable" ključevima).
+[functions.posalji-narudzbu]
+verify_jwt = false
+
+[functions.admin-order-action]
+verify_jwt = false
