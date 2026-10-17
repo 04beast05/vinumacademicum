@@ -1,0 +1,87 @@
+/* Vinum Academicum – sekcije "Naša priča" i "Restorani s kojima surađujemo"
+   Isti font (DM Sans), iste boje (#fff, #F8F8F8, #1a1a1a, #686868, #e5e5e5) kao ostatak stranice. */
+
+.va-label{ display:block; margin-bottom:14px; font:500 12px/1.1 'DM Sans',sans-serif; text-transform:uppercase; color:#686868; }
+.va-h2{ font-family:'DM Sans',sans-serif; font-weight:500; font-size:clamp(22px,2.6vw,34px); text-transform:uppercase; letter-spacing:-0.05em; line-height:1.2; color:var(--ink,#1a1a1a); }
+
+/* ================= NAŠA PRIČA ================= */
+.about{ background:#fff; padding:130px 48px 40px; }
+.about-inner{ max-width:1364px; margin:0 auto; }
+.about-chapter{ display:grid; grid-template-columns:repeat(12,1fr); column-gap:32px; align-items:center; margin-bottom:130px; }
+.about-copy{ grid-column:1 / span 5; grid-row:1; max-width:520px; }
+.about-media{ grid-column:7 / span 6; grid-row:1; background:#e5e5e5; overflow:hidden; aspect-ratio:4/5; }
+.about-chapter--wide .about-media{ aspect-ratio:4/3; }
+.about-media img{ width:100%; height:100%; object-fit:cover; object-position:50% 15%; display:block; }
+.about-chapter--reverse .about-copy{ grid-column:8 / span 5; }
+.about-chapter--reverse .about-media{ grid-column:1 / span 6; }
+
+.about-copy .va-h2{ margin-bottom:28px; }
+.about-copy p{ font:300 14px/1.75 'DM Sans',sans-serif; color:#686868; }
+.about-copy p + p{ margin-top:18px; }
+
+.about-stats{ display:grid; grid-template-columns:repeat(3,auto); justify-content:start; gap:40px; margin-top:46px; padding-top:28px; border-top:1px solid #e5e5e5; }
+.about-stat dt{ font:500 22px/1 'DM Sans',sans-serif; letter-spacing:-0.03em; color:var(--ink,#1a1a1a); margin-bottom:8px; white-space:nowrap; }
+.about-stat dd{ font:300 10px/1.4 'DM Sans',sans-serif; text-transform:uppercase; color:#8a8a8a; }
+
+/* nježno otkrivanje pri skrolu (samo ako JS radi i korisnik nije isključio animacije) */
+.va-js .about-chapter{ opacity:0; transform:translateY(28px); transition:opacity .8s ease, transform .8s ease; }
+.va-js .about-chapter.is-in{ opacity:1; transform:none; }
+
+@media (max-width:1100px){
+  .about{ padding:100px 32px 20px; }
+  .about-chapter{ margin-bottom:100px; }
+  .about-copy, .about-chapter--reverse .about-copy{ grid-column:1 / span 6; }
+  .about-media, .about-chapter--reverse .about-media{ grid-column:7 / span 6; }
+  .about-chapter--reverse .about-copy{ grid-column:7 / span 6; }
+  .about-chapter--reverse .about-media{ grid-column:1 / span 6; }
+}
+@media (max-width:820px){
+  .about{ padding:60px 20px 0; }
+  .about-chapter{ display:flex; flex-direction:column; align-items:stretch; gap:26px; margin-bottom:70px; }
+  .about-media, .about-chapter--wide .about-media{ order:1; width:100%; aspect-ratio:4/5; }
+  .about-chapter--wide .about-media{ aspect-ratio:4/3; }
+  .about-copy{ order:2; max-width:none; }
+  .about-copy .va-h2{ margin-bottom:20px; }
+  .about-copy p{ font-size:13px; line-height:1.7; }
+  .about-stats{ gap:22px; margin-top:32px; padding-top:22px; grid-template-columns:repeat(3,1fr); }
+  .about-stat dt{ font-size:17px; }
+  .about-stat dd{ font-size:9px; }
+}
+
+/* ================= RESTORANI S KOJIMA SURAĐUJEMO ================= */
+.partners{ background:#fff; padding:130px 0; overflow:hidden; }
+.partners-head{ max-width:1364px; margin:0 auto 56px; padding:0 48px; display:flex; justify-content:space-between; align-items:flex-end; gap:48px; }
+.partners-head p{ max-width:360px; font:300 14px/1.75 'DM Sans',sans-serif; color:#686868; }
+
+.partners-marquee{ position:relative; padding:46px 0; border-top:1px solid #e5e5e5; border-bottom:1px solid #e5e5e5;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 10%,#000 90%,transparent 100%);
+          mask-image:linear-gradient(90deg,transparent 0,#000 10%,#000 90%,transparent 100%); }
+.partners-track{ display:flex; width:max-content; animation:vaMarquee var(--dur,40s) linear infinite; will-change:transform; }
+.partners-list{ display:flex; align-items:center; list-style:none; margin:0; padding:0; flex-shrink:0; }
+.partners-list li{ display:flex; align-items:center; padding:0 clamp(34px,5vw,76px); }
+.partners-list a{ display:flex; align-items:center; }
+/* logotipi su crni – prozirnost i sivi ton daju mekan, diskretan dojam; na hover postaju puni */
+.partners-list img{ height:46px; width:auto; max-width:170px; object-fit:contain; display:block;
+  opacity:.38; filter:grayscale(1); transition:opacity .35s ease; }
+.partners-list li:hover img{ opacity:1; }
+.partners-marquee:hover .partners-track{ animation-play-state:paused; }
+@keyframes vaMarquee{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+
+@media (max-width:820px){
+  .partners{ padding:70px 0; }
+  .partners-head{ flex-direction:column; align-items:flex-start; gap:18px; padding:0 20px; margin-bottom:34px; }
+  .partners-head p{ font-size:13px; line-height:1.7; max-width:none; }
+  .partners-marquee{ padding:32px 0; }
+  .partners-list img{ height:32px; max-width:120px; }
+  .partners-list li{ padding:0 28px; }
+}
+@media (prefers-reduced-motion: reduce){
+  .partners-track{ animation:none; width:auto; flex-wrap:wrap; justify-content:center; }
+  .partners-list{ flex-wrap:wrap; justify-content:center; row-gap:24px; }
+  .partners-list.is-clone{ display:none; }
+  .partners-marquee{ -webkit-mask-image:none; mask-image:none; }
+  .va-js .about-chapter{ opacity:1; transform:none; transition:none; }
+}
+
+/* ---- cijena vina: prazno polje se ne prikazuje dok se ne upiše iznos ---- */
+.wine-price:empty{ display:none; }
