@@ -161,18 +161,12 @@ language plpgsql security definer set search_path = public as $$
 declare
   v_id uuid; v_num text;
   v_key text := nullif(p->>'idempotency_key','');
-  v_email text := lower(coalesce(p->>'email',''));
   v_item jsonb; v_prod public.products%rowtype; v_qty int;
   v_total numeric(10,2) := 0; v_priced boolean := true;
 begin
   if v_key is not null then
     select o.id, o.order_number into v_id, v_num from public.orders o where o.idempotency_key = v_key;
     if found then return query select v_id, v_num, true; return; end if;
-  end if;
-
-  if (select count(*) from public.orders o where lower(o.email) = v_email and o.created_at > now() - interval '1 hour') >= 3
-     or (select count(*) from public.orders o where o.created_at > now() - interval '1 hour') >= 60 then
-    raise exception 'RATE_LIMIT';
   end if;
 
   if jsonb_typeof(p->'items') is distinct from 'array' or jsonb_array_length(p->'items') not between 1 and 40 then

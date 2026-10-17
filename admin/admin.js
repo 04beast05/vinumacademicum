@@ -2,8 +2,8 @@
    a sve promjene (status, potvrda, e-mailovi) radi Edge Function `admin-order-action` koja provjerava ovlasti na serveru. */
 (function(){
   // ====== POSTAVKE: iste vrijednosti kao u assets/kosarica.js ======
-  var SUPABASE_URL = 'https://XXXXXXXX.supabase.co';
-  var SUPABASE_ANON_KEY = 'ANON_PUBLIC_KEY';
+  var SUPABASE_URL = 'https://aewezoonconyljfavnly.supabase.co';
+  var SUPABASE_ANON_KEY = 'sb_publishable_geSXFDGLpUGuqcdWtlX6Rg_3UFtTLEh';
   // =================================================================
 
   var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
@@ -186,9 +186,9 @@
         kv('Preuzimanje', esc(PICK[o.pickup_method])) + (o.customer_note ? kv('Napomena kupca', esc(o.customer_note).replace(/\n/g,'<br>')) : '') + '</div>' +
       '<div class="d-actions"><a class="btn ghost" href="tel:'+esc(tel(o.phone))+'" style="display:inline-flex;align-items:center;text-decoration:none">Nazovi kupca</a>' +
         '<a class="btn ghost" href="mailto:'+esc(o.email)+'?subject='+encodeURIComponent('Vaša narudžba '+o.order_number+' – Vinum Academicum')+'" style="display:inline-flex;align-items:center;text-decoration:none">Pošalji e-mail</a>'+acts+'</div>' +
-      '<div class="sec"><h3>Vina i količine</h3><table class="t"><thead><tr><th>Vino</th><th>Količina</th>'+(priced ? '<th>Cijena</th><th>Iznos</th>' : '')+'</tr></thead><tbody>' +
-        items.map(function(i){ return '<tr><td>'+esc(i.product_name)+'</td><td>'+i.quantity+' boca</td>'+(priced ? '<td>'+eur(i.unit_price)+'</td><td>'+eur(i.line_total)+'</td>' : '')+'</tr>'; }).join('') +
-        '</tbody></table><p style="margin-top:12px"><b>Ukupno: '+bottles(o)+' boca</b>'+(priced ? ' · <b>'+eur(o.total_amount)+'</b>' : ' · cijena prema ponudi')+'</p></div>' +
+      '<div class="sec"><h3>Vina i količine</h3><table class="t"><thead><tr><th>Vino</th><th>Količina</th>'+(priced ? '<th>Cijena / boca</th><th>Iznos s PDV-om</th>' : '')+'</tr></thead><tbody>' +
+        items.map(function(i){ return '<tr><td>'+esc(i.product_name)+'</td><td>'+i.quantity+' boca'+(priced ? '<div class="sm">'+eur(i.line_total)+' s PDV-om</div>' : '')+'</td>'+(priced ? '<td>'+eur(i.unit_price)+'</td><td>'+eur(i.line_total)+'</td>' : '')+'</tr>'; }).join('') +
+        '</tbody></table><p style="margin-top:12px"><b>Ukupno: '+bottles(o)+' boca</b>'+(priced ? ' · <b>'+eur(o.total_amount)+' s PDV-om</b>' : ' · cijena prema ponudi')+'</p></div>' +
       (o.final_message ? '<div class="sec"><h3>Poruka kupcu uz potvrdu</h3><div class="note-box">'+esc(o.final_message)+'</div></div>' : '') +
       (o.rejection_reason ? '<div class="sec"><h3>Razlog odbijanja</h3><div class="note-box">'+esc(o.rejection_reason)+'</div></div>' : '') +
       '<div class="sec"><h3>Interna napomena (kupac je ne vidi)</h3><textarea id="adminNote" maxlength="2000">'+esc(o.admin_note || '')+'</textarea><div class="modal-actions" style="margin-top:10px"><button class="btn sm" data-a="save_note">Spremi napomenu</button></div></div>' +
@@ -247,7 +247,7 @@
     var o = cur, orig = (o.order_items || []).map(function(i){ return { product_id:i.product_id, product_name:i.product_name, quantity:i.quantity, unit_price:i.unit_price }; });
     var rows = orig.map(function(i){ return { product_id:i.product_id, product_name:i.product_name, quantity:i.quantity, unit_price:i.unit_price }; });
     var pickup = o.pickup_method;
-    function totalTxt(){ var t = 0; for (var k = 0; k < rows.length; k++){ if (rows[k].unit_price == null || rows[k].unit_price === '') return 'cijena prema ponudi'; t += rows[k].quantity * Number(rows[k].unit_price); } return eur(t); }
+    function totalTxt(){ var t = 0; for (var k = 0; k < rows.length; k++){ if (rows[k].unit_price == null || rows[k].unit_price === '') return 'cijena prema ponudi'; t += rows[k].quantity * Number(rows[k].unit_price); } return eur(t) + ' s PDV-om'; }
     function draw(){
       $('mBody').querySelector('#eiBody').innerHTML = rows.map(function(i, idx){
         return '<tr data-i="'+idx+'"><td class="nm">'+esc(i.product_name)+'</td><td style="width:90px"><input type="number" min="1" max="1200" value="'+i.quantity+'" data-f="quantity" aria-label="Količina"></td><td style="width:110px"><input type="text" inputmode="decimal" value="'+(i.unit_price == null ? '' : String(i.unit_price).replace('.',','))+'" placeholder="cijena €" data-f="unit_price" aria-label="Cijena"></td><td style="width:34px"><button type="button" class="rm" data-rm aria-label="Ukloni">×</button></td></tr>';

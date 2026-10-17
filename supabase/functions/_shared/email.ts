@@ -14,7 +14,7 @@ export interface Order {
 export interface Cfg { siteUrl: string; logoUrl?: string; adminEmail: string }
 
 const KARTON = 6;
-export const WINERY = { name: "Vinum Academicum", phone: "+385 99 522 6371", email: "imalcic@ftrr.hr",
+export const WINERY = { name: "Vinum Academicum", phone: "+385 99 522 6371", email: "irengel@ftrr.hr",
   hq: "Vukovarska ul. 17, 34000 Požega", shop: "Cehovska ul. 1, 34000 Požega" };
 
 export const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
@@ -29,11 +29,14 @@ export const contactName = (o: Order) => o.customer_type === "company" ? `${o.co
 const bottles = (o: Order) => o.items.reduce((a, i) => a + i.quantity, 0);
 const priced = (o: Order) => o.total_amount !== null && o.items.every((i) => i.unit_price !== null);
 
-function qtyText(k: number): string {
+function qtyText(k: number, lineTotal: number | null, currency: string): string {
   const kart = Math.floor(k / KARTON), ost = k % KARTON, p: string[] = [];
   if (kart) p.push(`${kart} ${kart === 1 ? "karton" : "kartona"}`);
   if (ost) p.push(`${ost} boca`);
-  return `<b>${k} boca</b>` + (kart ? ` <span style="color:#868686;">(${p.join(" + ")})</span>` : "");
+  const iznos = lineTotal != null
+    ? `<div style="margin-top:6px;font-weight:bold;color:#1a1a1a;white-space:nowrap;">${eur(lineTotal, currency)} <span style="font-weight:normal;color:#868686;">s PDV-om</span></div>`
+    : "";
+  return `<b>${k} boca</b>` + (kart ? ` <span style="color:#868686;">(${p.join(" + ")})</span>` : "") + iznos;
 }
 
 function itemsTable(o: Order): string {
@@ -41,15 +44,15 @@ function itemsTable(o: Order): string {
   const th = (t: string, a = "left") => `<td align="${a}" style="padding:0 0 8px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#868686;border-bottom:1px solid #1a1a1a;">${t}</td>`;
   const rows = o.items.map((i) => `<tr>
     <td style="padding:14px 8px 14px 0;border-bottom:1px solid #ececec;font-size:13px;color:#1a1a1a;text-transform:uppercase;letter-spacing:.3px;">${esc(i.product_name)}</td>
-    <td align="right" style="padding:14px 0 14px 8px;border-bottom:1px solid #ececec;font-size:13px;color:#494949;">${qtyText(i.quantity)}</td>
+    <td align="right" style="padding:14px 0 14px 8px;border-bottom:1px solid #ececec;font-size:13px;color:#494949;">${qtyText(i.quantity, showPrice ? i.line_total : null, o.currency)}</td>
     ${showPrice ? `<td align="right" style="padding:14px 0 14px 12px;border-bottom:1px solid #ececec;font-size:13px;color:#494949;white-space:nowrap;">${eur(i.unit_price!, o.currency)}</td>
     <td align="right" style="padding:14px 0 14px 12px;border-bottom:1px solid #ececec;font-size:13px;font-weight:bold;color:#1a1a1a;white-space:nowrap;">${eur(i.line_total!, o.currency)}</td>` : ""}
   </tr>`).join("");
   const total = showPrice
-    ? `<td align="right" colspan="2" style="padding:18px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:24px;color:#000;white-space:nowrap;">${eur(o.total_amount!, o.currency)}</td>`
+    ? `<td align="right" colspan="2" style="padding:18px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:24px;color:#000;white-space:nowrap;">${eur(o.total_amount!, o.currency)}<div style="margin-top:4px;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#868686;">s PDV-om</div></td>`
     : `<td align="right" style="padding:18px 0 0;font-size:12px;color:#868686;">Cijena prema ponudi</td>`;
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-    <tr>${th("Vino")}${th("Količina", "right")}${showPrice ? th("Cijena", "right") + th("Iznos", "right") : ""}</tr>
+    <tr>${th("Vino")}${th("Količina", "right")}${showPrice ? th("Cijena / boca", "right") + th("Iznos s PDV-om", "right") : ""}</tr>
     ${rows}
     <tr><td colspan="${showPrice ? 1 : 1}" style="padding:18px 0 0;font-size:12px;color:#868686;text-transform:uppercase;letter-spacing:1px;">Ukupno ${bottles(o)} boca (${(bottles(o) / KARTON).toFixed(1).replace(".", ",")} kartona)</td>${showPrice ? total : total}</tr>
   </table>`;

@@ -44,6 +44,7 @@
 .va-link{ background:none; border:0; padding:0; cursor:pointer; font:500 10px 'DM Sans',sans-serif; letter-spacing:.8px; text-transform:uppercase; color:#686868; text-decoration:underline; text-underline-offset:3px; }
 .va-link:hover{ color:#000; }
 .va-line-total{ font-weight:600; font-size:14px; white-space:nowrap; }
+.va-line-total small, .va-rv-total b small, .va-summary strong small{ display:block; margin-top:3px; font:500 10px 'DM Sans',sans-serif; letter-spacing:1px; text-transform:uppercase; color:#686868; }
 
 .va-empty{ padding:30px 0; }
 .va-empty p{ font-size:14px; color:#686868; margin-bottom:24px; }
@@ -99,6 +100,12 @@
 .va-fab .va-cart-count{ display:flex !important; top:-4px; right:-4px; min-width:20px; height:20px; font-size:10px; background:#fff; color:#000; border:1px solid #000; }
 .va-fab.va-bump{ animation:vaBump .5s ease; }
 @keyframes vaBump{ 0%{transform:scale(1)} 35%{transform:scale(1.18)} 100%{transform:scale(1)} }
+
+/* boca koja odleti s kartice u ikonu košarice */
+.va-fly{ position:fixed; z-index:790; margin:0; padding:0; overflow:hidden; pointer-events:none;
+  transform-origin:center center; will-change:transform, opacity;
+  filter:drop-shadow(0 16px 14px rgba(0,0,0,.2)); }
+.va-fly img{ position:absolute; max-width:none; display:block; pointer-events:none; }
 @media (max-width:720px){ .va-fab{ right:16px; width:54px; height:54px; } }
 
 /* ---- upute za naručivanje ---- */
@@ -137,10 +144,8 @@
 .va-line-sub b{ color:#1a1a1a; }
 
 /* ---- navigacija: oznaka košarice ---- */
-.va-nav-count{ min-width:17px; height:17px; padding:0 5px; margin-left:6px; border-radius:9px; background:currentColor; align-items:center; justify-content:center; vertical-align:middle; }
-.va-nav-count{ font:600 9px/1 'DM Sans',sans-serif; }
+.va-nav-count{ display:none; min-width:17px; height:17px; padding:0 5px; margin-left:6px; border-radius:9px; background:#fff; color:#1a1a1a; align-items:center; justify-content:center; vertical-align:middle; font:600 10px/1 'DM Sans',sans-serif; letter-spacing:0; }
 .va-nav-cart a{ display:inline-flex; align-items:center; }
-.va-nav-count{ box-shadow:inset 0 0 0 20px currentColor; color:inherit; }
 
 /* ---- obrazac: polja, greške, pregled ---- */
 .va-field{ display:flex; flex-direction:column; min-width:0; }
@@ -169,3 +174,47 @@
 .va-send-ghost{ background:transparent; color:#000; margin-top:10px; }
 .va-send-ghost:hover:not(:disabled){ background:#000; color:#fff; }
 .va-review .va-msg{ margin:18px 0 6px; }
+
+/* ---- popup pregleda i potvrde ---- */
+.va-modal{ position:fixed; inset:0; z-index:900; display:flex; align-items:center; justify-content:center; padding:24px 12px; background:rgba(255,255,255,.18); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+.va-modal[hidden]{ display:none !important; }
+html.va-modal-open{ overflow:hidden; }
+html.va-modal-open body{ position:fixed; left:0; right:0; width:100%; height:auto; overflow:visible; }
+.va-modal-sheet{ position:relative; width:min(560px, 100%); max-height:min(88vh,860px); overflow:auto; margin:0; background:#111; color:#f3f3f3; padding:28px 28px 32px; border:1px solid rgba(255,255,255,.16); box-shadow:0 18px 48px rgba(0,0,0,.28); animation:vaSheet .35s ease; }
+@keyframes vaSheet{ from{ opacity:0; } to{ opacity:1; } }
+.va-modal-x{ position:absolute; top:14px; right:14px; width:40px; height:40px; border:0; background:transparent; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.va-modal-x svg{ width:18px; height:18px; }
+.va-modal-x:hover{ color:#fff; }
+.va-modal-steps{ display:flex; gap:22px; margin:0 36px 22px 0; padding:0 0 16px; list-style:none; border-bottom:1px solid rgba(255,255,255,.16); }
+.va-modal-steps li{ font:500 11px 'DM Sans',sans-serif; letter-spacing:1.4px; text-transform:uppercase; color:#8a8a8a; padding-bottom:8px; }
+.va-modal-steps li.is-on{ color:#fff; box-shadow:inset 0 -1px 0 #fff; }
+.va-modal-steps li.is-done{ color:#c8c8c8; }
+.va-modal .va-review h3{ color:#9a9a9a; }
+.va-modal .va-rv-item{ border-bottom-color:rgba(255,255,255,.14); color:#f3f3f3; }
+.va-modal .va-rv-item b, .va-modal .va-rv-row b, .va-modal .va-rv-total b{ color:#fff; }
+.va-modal .va-rv-item small, .va-modal .va-rv-text, .va-modal .va-done p{ color:#b5b5b5; }
+.va-modal .va-rv-total{ border-bottom-color:rgba(255,255,255,.4); color:#9a9a9a; }
+.va-modal .va-rv-total b small{ color:#9a9a9a; }
+.va-modal .va-rv-row{ border-bottom-color:rgba(255,255,255,.1); }
+.va-modal .va-rv-row span{ color:#8d8d8d; }
+.va-modal .va-send{ background:#fff; color:#111; border-color:#fff; }
+.va-modal .va-send:hover:not(:disabled){ background:transparent; color:#fff; }
+.va-modal .va-send-ghost{ background:transparent; color:#fff; border-color:rgba(255,255,255,.45); }
+.va-modal .va-send-ghost:hover:not(:disabled){ background:#fff; color:#111; }
+.va-modal .va-btn{ background:#fff; color:#111; border-color:#fff; }
+.va-modal .va-btn:hover{ background:transparent; color:#fff; }
+.va-modal .va-msg.is-err{ color:#ffb4b0; }
+.va-modal-sheet:focus{ outline:none; }
+.va-modal-sheet h2{ font-family:'Cormorant Garamond',serif; font-weight:500; font-size:36px; line-height:1.1; margin:0 0 8px; padding-right:28px; }
+.va-review[hidden], .va-done[hidden]{ display:none !important; }
+.va-modal .va-done{ max-width:none; padding:8px 0 0; text-align:left; }
+.va-modal .va-done p{ margin-top:8px; }
+.va-modal .va-done .va-broj{ color:#fff; }
+.va-modal .va-btn{ margin-top:8px; }
+@media (min-width:760px){
+  .va-modal-sheet{ padding:36px 40px 40px; }
+}
+@media (max-width:720px){
+  .va-modal-sheet h2{ font-size:30px; }
+  .va-modal-sheet{ padding:24px 20px 28px; }
+}

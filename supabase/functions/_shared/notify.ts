@@ -7,7 +7,7 @@ export const KINDS: Kind[] = ["admin_notification", "customer_receipt", "custome
 // Šalje e-mail putem Resenda (samo na serveru) i UVIJEK upisuje rezultat u email_log.
 // Nikada ne baca iznimku – neuspjeh e-maila ne smije utjecati na spremljenu narudžbu.
 export async function sendOrderEmail(sb: SupabaseClient, orderId: string, kind: Kind): Promise<{ ok: boolean; error?: string }> {
-  const adminEmail = Deno.env.get("ADMIN_NOTIFICATION_EMAIL") ?? "imalcic@ftrr.hr";
+  const adminEmail = Deno.env.get("ADMIN_NOTIFICATION_EMAIL") ?? "irengel@ftrr.hr";
   let recipient = adminEmail;
   try {
     const { data, error } = await sb.from("orders").select("*, items:order_items(product_name, quantity, unit_price, line_total)").eq("id", orderId).single();
@@ -21,8 +21,9 @@ export async function sendOrderEmail(sb: SupabaseClient, orderId: string, kind: 
       : customerRejectionEmail(order, cfg);
     recipient = kind === "admin_notification" ? adminEmail : order.email;
 
-    const apiKey = Deno.env.get("RESEND_API_KEY"), from = Deno.env.get("RESEND_FROM_EMAIL");
-    if (!apiKey || !from) throw new Error("RESEND_API_KEY / RESEND_FROM_EMAIL nisu postavljeni");
+    const apiKey = Deno.env.get("RESEND_API_KEY");
+    const from = Deno.env.get("RESEND_FROM_EMAIL") ?? "Vinum Academicum <narudzbe@vinumacademicum.ftrr.hr>";
+    if (!apiKey) throw new Error("RESEND_API_KEY nije postavljen");
 
     const { count } = await sb.from("email_log").select("id", { count: "exact", head: true }).eq("order_id", orderId).eq("kind", kind);
     const res = await fetch("https://api.resend.com/emails", {

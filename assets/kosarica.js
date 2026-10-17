@@ -2,8 +2,8 @@
    Cijene i nazivi vina dolaze iz tablice `products` (isti izvor koristi i server pri izradi narudžbe). */
 (function(){
   // ====== POSTAVKE: Supabase > Project Settings > API (anon/publishable ključ smije biti javan) ======
-  var SUPABASE_URL = 'https://XXXXXXXX.supabase.co';
-  var SUPABASE_ANON_KEY = 'ANON_PUBLIC_KEY';
+  var SUPABASE_URL = 'https://aewezoonconyljfavnly.supabase.co';
+  var SUPABASE_ANON_KEY = 'sb_publishable_geSXFDGLpUGuqcdWtlX6Rg_3UFtTLEh';
   // ================================================================================================
 
   var CART_KEY = 'va_kosarica_v1', DRAFT_KEY = 'va_obrazac_v1', IDEM_KEY = 'va_idem_v1', KARTON = 6;
@@ -36,8 +36,85 @@
     var c = load(), f = c.filter(function(i){ return i.id === item.id; })[0];
     if (f) f.qty += qty; else c.push({ id:item.id, name:item.name, img:item.img, qty:qty });
     save(c);
+  }
+  function bumpKosarice(){
     var fab = document.querySelector('.va-fab');
-    if (fab){ fab.classList.remove('va-bump'); void fab.offsetWidth; fab.classList.add('va-bump'); }
+    if (!fab) return;
+    fab.classList.remove('va-bump'); void fab.offsetWidth; fab.classList.add('va-bump');
+  }
+  /* Srediste ikone ondje gdje ce mirovati. Ulazna tranzicija (pomak i smanjenje)
+     inace pomakne izmjerenu tocku, pa se za vrijeme mjerenja kratko ugasi. */
+  function sredisteKosarice(fab){
+    var cs = getComputedStyle(fab);
+    if (fab.classList.contains('is-visible') && (!cs.transform || cs.transform === 'none')){
+      var r = fab.getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    }
+    var prev = fab.style.transition;
+    var bila = fab.classList.contains('is-visible');
+    fab.style.transition = 'none';
+    fab.classList.add('is-visible');
+    var box = fab.getBoundingClientRect();
+    var tocka = { x: box.left + box.width / 2, y: box.top + box.height / 2 };
+    if (!bila) fab.classList.remove('is-visible');
+    fab.style.transition = prev;
+    if (!bila) void fab.offsetWidth;
+    return tocka;
+  }
+  function letiUKosaricu(img){
+    var fab = document.querySelector('.va-fab');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!fab || !img || reduce || typeof img.getBoundingClientRect !== 'function' || typeof img.animate !== 'function'){
+      bumpKosarice();
+      return;
+    }
+    var ir = img.getBoundingClientRect();
+    var okvir = img.closest('.wine-img-box');
+    var br = okvir ? okvir.getBoundingClientRect() : ir;
+    var left = Math.max(ir.left, br.left), top = Math.max(ir.top, br.top);
+    var right = Math.min(ir.right, br.right), bottom = Math.min(ir.bottom, br.bottom);
+    var vw = Math.max(0, right - left), vh = Math.max(0, bottom - top);
+    if (vw < 8 || vh < 8){ bumpKosarice(); return; }
+
+    var to = sredisteKosarice(fab);
+    var sx = left + vw / 2, sy = top + vh / 2;
+    var dx = to.x - sx, dy = to.y - sy;
+    var lift = Math.max(120, Math.min(220, Math.hypot(dx, dy) * 0.2));
+
+    var flyer = document.createElement('div');
+    flyer.className = 'va-fly';
+    flyer.setAttribute('aria-hidden', 'true');
+    flyer.style.left = left + 'px';
+    flyer.style.top = top + 'px';
+    flyer.style.width = vw + 'px';
+    flyer.style.height = vh + 'px';
+    var clone = document.createElement('img');
+    clone.alt = '';
+    clone.src = img.currentSrc || img.getAttribute('src') || '';
+    clone.style.left = (ir.left - left) + 'px';
+    clone.style.top = (ir.top - top) + 'px';
+    clone.style.width = ir.width + 'px';
+    clone.style.height = ir.height + 'px';
+    flyer.appendChild(clone);
+    document.body.appendChild(flyer);
+
+    var frames = [], steps = 24, i;
+    for (i = 0; i <= steps; i++){
+      var t = i / steps;
+      var along = 1 - Math.pow(1 - t, 2.05);
+      var x = dx * along;
+      var y = dy * along - Math.sin(Math.PI * along) * lift;
+      var scale = 1 - Math.pow(t, 1.15) * 0.88;
+      var op = t < 0.9 ? 1 : 1 - (t - 0.9) / 0.1;
+      frames.push({
+        transform: 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px) scale(' + scale.toFixed(3) + ')',
+        opacity: Math.max(0, op),
+        offset: t
+      });
+    }
+    var anim = flyer.animate(frames, { duration: 760, easing: 'linear', fill: 'forwards' });
+    anim.onfinish = function(){ flyer.remove(); bumpKosarice(); };
+    anim.oncancel = function(){ flyer.remove(); };
   }
 
   /* ---------- proizvodi i cijene iz Supabasea ---------- */
@@ -52,9 +129,11 @@
   function popuniCijeneNaKarticama(){
     document.querySelectorAll('.wine-card').forEach(function(card){
       var n = card.querySelector('.wine-name'), pr = card.querySelector('.wine-price');
-      if (!n || !pr || pr.textContent.trim()) return;      // ručno upisana cijena u HTML-u ima prednost za prikaz
-      var p = cijena(slug(n.textContent.trim()));
-      if (p != null) pr.textContent = eur(p);
+      if (!n || !pr) return;
+      var id = slug(n.textContent.trim());
+      if (!Object.prototype.hasOwnProperty.call(products, id)) return; // nema odgovora iz baze — ostavi HTML kao rezervu
+      var p = cijena(id);
+      pr.textContent = p != null ? eur(p) : '';            // ista cijena kao u košarici i narudžbi; prazno = prema ponudi
     });
   }
 
@@ -106,6 +185,7 @@
       });
       add.addEventListener('click', function(){
         dodaj(item, q * mode);
+        letiUKosaricu(imgEl);
         add.textContent = 'Dodano ✓'; add.classList.add('is-done');
         setTimeout(function(){ add.textContent = 'Dodaj u košaricu'; add.classList.remove('is-done'); }, 1400);
         q = 1; qEl.textContent = 1;
@@ -126,13 +206,14 @@
       return '<div class="va-line" data-id="'+esc(i.id)+'">' +
         '<div class="va-line-img">'+(i.img ? '<img src="'+esc(i.img)+'" alt="'+esc(i.name)+'">' : '')+'</div>' +
         '<div class="va-line-info"><div class="va-line-name">'+esc(i.name)+'</div>' +
-        '<div class="va-line-sub">'+(p != null ? eur(p)+' / boca · ' : '')+i.qty+' boca'+(kt ? ' · <b>'+kt+'</b>' : '')+'</div>' +
+        '<div class="va-line-sub">'+(p != null ? eur(p)+' / boca · ' : '')+i.qty+' boca'+(kt ? ' · <b>'+kt+'</b>' : '')+(p != null ? ' · <b>'+eur(p * i.qty)+' s PDV-om</b>' : '')+'</div>' +
         '<div class="va-line-ctrl"><div class="va-qty"><button type="button" data-a="-1" aria-label="Manje">−</button><span class="va-q">'+i.qty+'</span><button type="button" data-a="1" aria-label="Više">+</button></div>' +
         '<button type="button" class="va-link" data-a="k">+ Karton (6)</button></div></div>' +
-        (p != null ? '<div class="va-line-total">'+eur(p * i.qty)+'</div>' : '') +
+        (p != null ? '<div class="va-line-total">'+eur(p * i.qty)+'<small>s PDV-om</small></div>' : '') +
         '<button type="button" class="va-remove" data-a="x" aria-label="Ukloni '+esc(i.name)+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5 L19 19 M19 5 L5 19" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button></div>';
     }).join('');
     var boca = brojBoca(c), t = ukupno(c);
+    document.getElementById('vaSumLabel').textContent = t != null ? 'Ukupno s PDV-om' : 'Ukupno';
     document.getElementById('vaSumBoca').textContent = boca + ' boca (' + (boca / KARTON).toFixed(1).replace('.',',') + ' kartona)';
     document.getElementById('vaSumTotal').textContent = t != null ? eur(t) : 'Prema ponudi';
     document.getElementById('vaSumTotal').classList.toggle('is-small', t == null);
@@ -218,11 +299,11 @@
     var red = function(k, val){ return val ? '<div class="va-rv-row"><span>'+k+'</span><b>'+esc(val)+'</b></div>' : ''; };
     var items = c.map(function(i){
       var p = cijena(i.id), kt = kartonText(i.qty);
-      return '<div class="va-rv-item"><div><b>'+esc(i.name)+'</b><small>'+i.qty+' boca'+(kt ? ' ('+kt+')' : '')+(p != null ? ' × '+eur(p) : '')+'</small></div>'+(p != null ? '<span>'+eur(p*i.qty)+'</span>' : '')+'</div>';
+      return '<div class="va-rv-item"><div><b>'+esc(i.name)+'</b><small>'+i.qty+' boca'+(kt ? ' ('+kt+')' : '')+(p != null ? ' · '+eur(p)+' / boca · '+eur(p*i.qty)+' s PDV-om' : '')+'</small></div>'+(p != null ? '<span>'+eur(p*i.qty)+'</span>' : '')+'</div>';
     }).join('');
     rv.querySelector('.va-rv-body').innerHTML =
       '<h3>Odabrana vina</h3>' + items +
-      '<div class="va-rv-total"><span>Ukupno '+brojBoca(c)+' boca</span><b>'+(t != null ? eur(t) : 'Cijena prema ponudi')+'</b></div>' +
+      '<div class="va-rv-total"><span>Ukupno '+brojBoca(c)+' boca</span><b>'+(t != null ? eur(t)+'<small>s PDV-om</small>' : 'Cijena prema ponudi')+'</b></div>' +
       '<h3>Podaci o naručitelju</h3>' +
       red('Vrsta', tip === 'company' ? 'Pravna osoba' : 'Fizička osoba') +
       (tip === 'company'
@@ -231,10 +312,42 @@
       red('E-mail', d.email) + red('Mobitel', d.phone) +
       '<h3>Preuzimanje</h3><p class="va-rv-text">'+esc(PICKUP[d.pickup_method])+'</p>' +
       (d.customer_note ? '<h3>Napomena</h3><p class="va-rv-text">'+esc(d.customer_note)+'</p>' : '');
-    form.hidden = true; rv.hidden = false;
-    document.getElementById('vaCheckout').scrollIntoView({ behavior:'smooth', block:'start' });
+    korakModala('review');
   }
-  function nazadNaObrazac(){ document.getElementById('vaReview').hidden = true; form.hidden = false; document.getElementById('vaMsg').textContent = ''; }
+  function korakModala(step){
+    var modal = document.getElementById('vaModal');
+    var review = document.getElementById('vaReview');
+    var done = document.getElementById('vaDone');
+    review.hidden = step !== 'review';
+    done.hidden = step !== 'done';
+    var sheet = modal.querySelector('.va-modal-sheet');
+    if (!document.documentElement.classList.contains('va-modal-open')){
+      modalScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      document.body.style.top = '-' + modalScrollY + 'px';
+      document.documentElement.classList.add('va-modal-open');
+    }
+    modal.hidden = false;
+    modal.querySelectorAll('.va-modal-steps li').forEach(function(li){
+      var on = li.dataset.step === step;
+      li.classList.toggle('is-on', on);
+      li.classList.toggle('is-done', step === 'done' && li.dataset.step === 'review');
+    });
+    sheet.setAttribute('aria-labelledby', step === 'done' ? 'vaDoneTitle' : 'vaModalTitle');
+    if (!sheet.hasAttribute('tabindex')) sheet.setAttribute('tabindex', '-1');
+    sheet.focus({ preventScroll: true });
+  }
+  var modalScrollY = 0;
+  function zatvoriModal(){
+    if (saljem) return;
+    document.getElementById('vaModal').hidden = true;
+    document.documentElement.classList.remove('va-modal-open');
+    document.body.classList.remove('va-modal-open');
+    document.body.style.top = '';
+    window.scrollTo(0, modalScrollY);
+    var msg = document.getElementById('vaMsg');
+    if (msg){ msg.textContent = ''; msg.className = 'va-msg'; }
+  }
+  function nazadNaObrazac(){ zatvoriModal(); var first = form.querySelector('input:not([disabled])'); if (first) first.focus({ preventScroll: true }); }
 
   function idemKey(c){
     var h = c.map(function(i){ return i.id + ':' + i.qty; }).join('|'), s;
@@ -254,6 +367,7 @@
     body.idempotency_key = idemKey(c);
     body.items = c.map(function(i){ return { product_id: i.id, quantity: i.qty }; });
     saljem = true; btn.disabled = true; btn.classList.add('is-loading'); btn.textContent = 'Šaljem narudžbu…'; msg.textContent = ''; msg.className = 'va-msg';
+    document.getElementById('vaModalClose').disabled = true;
     fetch(SUPABASE_URL + '/functions/v1/posalji-narudzbu', {
       method:'POST',
       headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_ANON_KEY, 'Authorization':'Bearer '+SUPABASE_ANON_KEY },
@@ -263,15 +377,18 @@
       if (!res.ok || !res.j.ok) throw new Error(res.j.error || 'Slanje nije uspjelo.');
       save([]);                                // košarica se briše TEK nakon uspješnog spremanja
       try { sessionStorage.removeItem(DRAFT_KEY); sessionStorage.removeItem(IDEM_KEY); } catch(e){}
-      document.getElementById('vaMain').hidden = true; document.getElementById('vaSteps').hidden = true;
-      document.getElementById('vaDone').hidden = false;
+      renderKosarica();
       document.getElementById('vaDoneBroj').textContent = res.j.order_number || '';
-      window.scrollTo({ top:0, behavior:'smooth' });
+      saljem = false;
+      btn.disabled = false; btn.classList.remove('is-loading'); btn.textContent = 'Pošalji narudžbu';
+      document.getElementById('vaModalClose').disabled = false;
+      korakModala('done');
     }).catch(function(err){
       var m = (err && err.message) ? err.message : 'Slanje nije uspjelo.';
       if (err instanceof TypeError) m = 'Nema veze s poslužiteljem. Provjerite internet i pokušajte ponovno.';
       msg.textContent = m + ' Vaša košarica i podaci su sačuvani.'; msg.className = 'va-msg is-err';
       saljem = false; btn.disabled = false; btn.classList.remove('is-loading'); btn.textContent = 'Pošalji narudžbu';
+      document.getElementById('vaModalClose').disabled = false;
     });
   }
 
@@ -287,7 +404,10 @@
       if (a === 'x') c = c.filter(function(i){ return i !== it; });
       else if (a === 'k') it.qty += KARTON;
       else { it.qty += +a; if (it.qty < 1) c = c.filter(function(i){ return i !== it; }); }
-      save(c); renderKosarica(); if (!document.getElementById('vaReview').hidden) prikaziPregled();
+      save(c); renderKosarica();
+      if (!document.getElementById('vaModal').hidden && document.getElementById('vaDone').hidden){
+        if (!load().length) zatvoriModal(); else prikaziPregled();
+      }
     });
     document.querySelectorAll('.va-tip button').forEach(function(b){ b.addEventListener('click', function(){ postaviTip(b.dataset.t); spremiNacrt(); }); });
     postaviTip('individual'); vratiNacrt();
@@ -296,6 +416,11 @@
     form.addEventListener('submit', function(e){ e.preventDefault(); if (validiraj()) prikaziPregled(); });
     document.getElementById('vaBack').addEventListener('click', nazadNaObrazac);
     document.getElementById('vaSend').addEventListener('click', posalji);
+    document.getElementById('vaModalClose').addEventListener('click', zatvoriModal);
+    document.getElementById('vaModal').addEventListener('click', function(e){ if (e.target === this) zatvoriModal(); });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && !document.getElementById('vaModal').hidden) zatvoriModal();
+    });
   }
 
   document.addEventListener('DOMContentLoaded', function(){

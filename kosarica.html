@@ -79,7 +79,7 @@
   </script>
 
   <nav class="navbar">
-    <a href="#" class="nav-logo" aria-label="Vinum Academicum">
+    <a href="index.html" class="nav-logo" aria-label="Vinum Academicum">
       <img src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
     </a>
     <div class="nav-right">
@@ -100,7 +100,7 @@
     <div class="site-menu-overlay" data-menu-close></div>
     <div class="site-menu-panel">
       <div class="site-menu-head">
-        <a href="#" class="site-menu-logo" aria-label="Vinum Academicum">
+        <a href="index.html" class="site-menu-logo" aria-label="Vinum Academicum">
           <img src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
         </a>
         <button class="site-menu-close" type="button" aria-label="Zatvori izbornik" data-menu-close>
@@ -168,7 +168,7 @@
       </div>
 
       <div class="va-cart-right" id="vaCheckout" hidden>
-        <div class="va-summary"><div><span>Ukupno</span><div id="vaSumBoca" style="font-size:13px;margin-top:6px;color:#1a1a1a"></div></div><strong id="vaSumTotal"></strong></div>
+        <div class="va-summary"><div><span id="vaSumLabel">Ukupno s PDV-om</span><div id="vaSumBoca" style="font-size:13px;margin-top:6px;color:#1a1a1a"></div></div><strong id="vaSumTotal"></strong></div>
 
         <div class="va-note">
           <b>Preuzimanje:</b> manje količine možete preuzeti osobno na <b>FTRR-u (Fakultet za turizam i ruralni razvoj), Vukovarska 17, Požega</b>. Karton = 6 boca. Narudžba nije konačna dok je vinarija ne potvrdi: najprije vas kontaktiramo i dogovaramo detalje. Plaćanje se ne obavlja online.
@@ -209,21 +209,34 @@
           <p class="va-legal">Polja označena zvjezdicom su obvezna. Zabranjena prodaja alkohola osobama mlađima od 18 godina.</p>
           <button class="va-send" type="submit">Nastavi na pregled narudžbe</button>
         </form>
+      </div>
+    </div>
 
-        <div class="va-review" id="vaReview" hidden>
+    <div class="va-modal" id="vaModal" hidden>
+      <div class="va-modal-sheet" role="dialog" aria-modal="true" aria-labelledby="vaModalTitle">
+        <button type="button" class="va-modal-x" id="vaModalClose" aria-label="Zatvori">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5 L19 19 M19 5 L5 19" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </button>
+        <ol class="va-modal-steps">
+          <li data-step="review">01 Pregled</li>
+          <li data-step="done">02 Potvrda</li>
+        </ol>
+
+        <div class="va-review" id="vaReview">
+          <h2 id="vaModalTitle">Pregled narudžbe</h2>
           <div class="va-rv-body"></div>
           <div class="va-msg" id="vaMsg" role="alert"></div>
           <button class="va-send" id="vaSend" type="button">Pošalji narudžbu</button>
           <button class="va-send va-send-ghost" id="vaBack" type="button">← Uredi podatke</button>
         </div>
-      </div>
-    </div>
 
-    <div class="va-done" id="vaDone" hidden>
-      <h2>Hvala na upitu</h2>
-      <p>Vaš upit je zaprimljen. Javit ćemo vam se uskoro s ponudom i dogovorom o preuzimanju.</p>
-      <div class="va-broj">Broj narudžbe: <span id="vaDoneBroj"></span></div>
-      <a class="va-btn" href="index.html">Povratak na početnu</a>
+        <div class="va-done" id="vaDone" hidden>
+          <h2 id="vaDoneTitle">Hvala na upitu</h2>
+          <p>Vaš upit je zaprimljen. Javit ćemo vam se uskoro s ponudom i dogovorom o preuzimanju.</p>
+          <div class="va-broj">Broj narudžbe: <span id="vaDoneBroj"></span></div>
+          <a class="va-btn" href="index.html">Povratak na početnu</a>
+        </div>
+      </div>
     </div>
   </section>
 

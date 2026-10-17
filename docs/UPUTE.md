@@ -45,7 +45,7 @@ Cijene su **jedini izvor istine u tablici `products`** – server po njima raču
 - ili poslije u panelu: kartica **Cijene vina** (preporučeno).
 
 Dok je cijena prazna, vino se prikazuje bez cijene, a u košarici/e-mailovima piše "cijena prema ponudi". Ukupan iznos prikazuje se samo kad **sva** vina u narudžbi imaju cijenu.
-Prazna polja `<p class="wine-price"></p>` na početnoj stranici **sama se popunjavaju** iz baze. Ako cijenu ručno upišete u HTML, to je samo prikaz i ne ulazi u narudžbu – zato cijene unosite u bazu.
+Kartice na početnoj stranici **prikazuju cijenu iz baze** čim se stranica učita (isti iznos kao košarica i narudžba). Iznos u HTML-u je samo rezerva dok se baza ne učita, ili ako do baze nema veze. Cijene mijenjajte u panelu, kartica **Cijene vina**.
 
 ### 1.4 Autentifikacija – zaključavanje
 1. **Authentication → Sign In / Providers → Email**: isključite **"Allow new users to sign up"** (nema samostalne registracije). Postavite **minimalnu duljinu lozinke na 12**.

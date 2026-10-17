@@ -1,8 +1,8 @@
 // Javna funkcija: kupac šalje narudžbu. Validira sve, sprema atomarno u Postgres (create_order), zatim šalje e-mailove.
-import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders, json } from "../_shared/cors.ts";
 import { emailOk, oibOk, phoneOk, postalOk, str } from "../_shared/validate.ts";
 import { sendOrderEmail } from "../_shared/notify.ts";
+import { serviceClient } from "../_shared/supabase.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders(req) });
@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
     }
     p.items = [...agg].map(([product_id, quantity]) => ({ product_id, quantity }));
 
-    const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
+    const sb = serviceClient();
     const { data, error } = await sb.rpc("create_order", { p });
     if (error) {
       const m = error.message ?? "";
