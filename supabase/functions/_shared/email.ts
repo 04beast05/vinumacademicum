@@ -1,4 +1,36 @@
-    const kart = Math.floor(k / KARTON), ost = k % KARTON, p: string[] = [];
+// Čisti generatori HTML e-mailova (bez Deno API-ja – mogu se testirati i izvan Supabasea).
+// Dizajn: crno-bijeli, uredničke serife (Georgia) + sans (Arial) – web-fontovi nisu pouzdani u e-mail klijentima.
+
+export interface Item { product_name: string; quantity: number; unit_price: number | null; line_total: number | null }
+export interface Order {
+  id: string; order_number: string; customer_type: "individual" | "company"; status: string;
+  first_name: string | null; last_name: string | null; company_name: string | null; oib: string | null;
+  street_address: string | null; postal_code: string | null; city: string | null;
+  contact_first_name: string | null; contact_last_name: string | null;
+  email: string; phone: string; pickup_method: "ftrr" | "delivery"; customer_note: string | null;
+  total_amount: number | null; currency: string; final_message: string | null; rejection_reason: string | null;
+  created_at: string; confirmed_at: string | null; items: Item[];
+}
+export interface Cfg { siteUrl: string; logoUrl?: string; adminEmail: string }
+
+const KARTON = 6;
+export const WINERY = { name: "Vinum Academicum", phone: "+385 99 271 0088", email: "imalcic@ftrr.hr",
+  hq: "Vukovarska ul. 17, 34000 Požega", shop: "Cehovska ul. 1, 34000 Požega" };
+
+export const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+export const eur = (n: number, cur = "EUR") => n.toFixed(2).replace(".", ",") + (cur === "EUR" ? " €" : " " + cur);
+export const when = (iso: string) => new Date(iso).toLocaleString("hr-HR", { timeZone: "Europe/Zagreb", dateStyle: "long", timeStyle: "short" });
+export const pickupText = (m: string) => m === "ftrr"
+  ? "Osobno preuzimanje – FTRR (Fakultet turizma i ruralnog razvoja), Vukovarska 17, Požega"
+  : "Dostava / preuzimanje po dogovoru (detalji se naknadno dogovaraju s vinarijom)";
+export const typeText = (t: string) => t === "company" ? "Pravna osoba" : "Fizička osoba";
+export const customerName = (o: Order) => o.customer_type === "company" ? (o.company_name ?? "") : `${o.first_name ?? ""} ${o.last_name ?? ""}`.trim();
+export const contactName = (o: Order) => o.customer_type === "company" ? `${o.contact_first_name ?? ""} ${o.contact_last_name ?? ""}`.trim() : customerName(o);
+const bottles = (o: Order) => o.items.reduce((a, i) => a + i.quantity, 0);
+const priced = (o: Order) => o.total_amount !== null && o.items.every((i) => i.unit_price !== null);
+
+function qtyText(k: number, lineTotal: number | null, currency: string): string {
+  const kart = Math.floor(k / KARTON), ost = k % KARTON, p: string[] = [];
   if (kart) p.push(`${kart} ${kart === 1 ? "karton" : "kartona"}`);
   if (ost) p.push(`${ost} boca`);
   const iznos = lineTotal != null
@@ -9,12 +41,12 @@
 
 function itemsTable(o: Order): string {
   const showPrice = priced(o);
-  const th = (t: string, a = "left") => `<td align="${a}" style="padding:0 0 10px;font-size:9px;letter-spacing:1.3px;text-transform:uppercase;color:#777777;border-bottom:1px solid #111111;">${t}</td>`;
+  const th = (t: string, a = "left") => `<td align="${a}" style="padding:0 0 8px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#868686;border-bottom:1px solid #1a1a1a;">${t}</td>`;
   const rows = o.items.map((i) => `<tr>
-    <td style="padding:16px 8px 16px 0;border-bottom:1px solid #e8e8e8;font-size:12px;line-height:1.6;color:#111111;text-transform:uppercase;letter-spacing:.35px;">${esc(i.product_name)}</td>
-    <td align="right" style="padding:16px 0 16px 8px;border-bottom:1px solid #e8e8e8;font-size:12px;line-height:1.6;color:#333333;">${qtyText(i.quantity, showPrice ? i.line_total : null, o.currency)}</td>
-    ${showPrice ? `<td align="right" style="padding:16px 0 16px 12px;border-bottom:1px solid #e8e8e8;font-size:12px;color:#333333;white-space:nowrap;">${eur(i.unit_price!, o.currency)}</td>
-    <td align="right" style="padding:16px 0 16px 12px;border-bottom:1px solid #e8e8e8;font-size:12px;font-weight:bold;color:#111111;white-space:nowrap;">${eur(i.line_total!, o.currency)}</td>` : ""}
+    <td style="padding:14px 8px 14px 0;border-bottom:1px solid #ececec;font-size:13px;color:#1a1a1a;text-transform:uppercase;letter-spacing:.3px;">${esc(i.product_name)}</td>
+    <td align="right" style="padding:14px 0 14px 8px;border-bottom:1px solid #ececec;font-size:13px;color:#494949;">${qtyText(i.quantity, showPrice ? i.line_total : null, o.currency)}</td>
+    ${showPrice ? `<td align="right" style="padding:14px 0 14px 12px;border-bottom:1px solid #ececec;font-size:13px;color:#494949;white-space:nowrap;">${eur(i.unit_price!, o.currency)}</td>
+    <td align="right" style="padding:14px 0 14px 12px;border-bottom:1px solid #ececec;font-size:13px;font-weight:bold;color:#1a1a1a;white-space:nowrap;">${eur(i.line_total!, o.currency)}</td>` : ""}
   </tr>`).join("");
   const total = showPrice
     ? `<td align="right" colspan="2" style="padding:18px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:24px;color:#000;white-space:nowrap;">${eur(o.total_amount!, o.currency)}<div style="margin-top:4px;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#868686;">s PDV-om</div></td>`
@@ -26,47 +58,34 @@ function itemsTable(o: Order): string {
   </table>`;
 }
 
-const button = (href: string, label: string, filled: boolean) => `<td align="center" valign="top" style="width:50%;padding:0 5px;">
-  <a href="${esc(href)}" style="display:block;padding:15px 9px;font-family:Arial,Helvetica,sans-serif;font-size:10px;line-height:1.5;font-weight:bold;letter-spacing:1.2px;text-transform:uppercase;text-decoration:none;${filled ? "background:#050505;color:#ffffff;border:1px solid #050505;" : "background:#ffffff;color:#050505;border:1px solid #050505;"}">${label}</a></td>`;
+const button = (href: string, label: string, filled: boolean) => `<td align="center" style="padding:0 6px;">
+  <a href="${esc(href)}" style="display:block;padding:16px 10px;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;${filled ? "background:#000;color:#fff;border:1px solid #000;" : "background:#fff;color:#000;border:1px solid #000;"}">${label}</a></td>`;
 
-const label = (t: string) => `<div style="font-size:10px;line-height:1.5;letter-spacing:2px;color:#777777;text-transform:uppercase;margin-bottom:13px;padding-bottom:9px;border-bottom:1px solid #d8d8d8;">${t}</div>`;
+const label = (t: string) => `<div style="font-size:11px;letter-spacing:2px;color:#868686;text-transform:uppercase;margin-bottom:8px;">${t}</div>`;
 
 function layout(cfg: Cfg, opt: { preheader: string; kicker: string; badge?: string; inner: string }): string {
-  // cfg.logoUrl može pokazivati na javno dostupan SVG ili PNG.
-  // Za e-mail je potreban apsolutni HTTPS URL; relativne putanje poput assets/img/... ne rade.
-  // SVG podrška ovisi o e-mail klijentu, pa je PNG sigurnija rezervna opcija.
   const logo = cfg.logoUrl
-    ? `<img src="${esc(cfg.logoUrl)}" alt="Vinum Academicum" width="190" style="display:block;width:190px;max-width:100%;height:auto;margin:0 auto;border:0;outline:none;text-decoration:none;">`
-    : `<div style="font-family:Georgia,'Times New Roman',serif;font-size:25px;line-height:1.3;letter-spacing:4px;color:#ffffff;text-transform:uppercase;">Vinum Academicum</div>`;
-  return `<!DOCTYPE html><html lang="hr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta name="supported-color-schemes" content="light"></head>
-<body style="margin:0;padding:0;background:#eeeeee;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#eeeeee;font-size:1px;line-height:1px;">${esc(opt.preheader)}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background:#eeeeee;">
-<tr><td align="center" style="padding:32px 12px;">
-  <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:#ffffff;border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;">
-    <tr><td align="center" style="background:#050505;padding:42px 28px 34px;border-bottom:4px solid #d8d8d8;">
-      ${logo}
-      <div style="margin-top:20px;font-size:9px;line-height:1.6;letter-spacing:3px;color:#b8b8b8;text-transform:uppercase;">${opt.kicker}</div>
-      ${opt.badge ? `<div style="margin-top:18px;"><span style="display:inline-block;padding:8px 13px;border:1px solid #777777;color:#ffffff;font-size:9px;line-height:1.4;letter-spacing:2px;text-transform:uppercase;">${opt.badge}</span></div>` : ""}
-    </td></tr>
-    ${opt.inner}
-    <tr><td style="padding:0 36px;"><div style="height:1px;background:#e7e7e7;font-size:1px;line-height:1px;">&nbsp;</div></td></tr>
-    <tr><td align="center" style="background:#050505;padding:27px 24px 30px;font-size:10px;line-height:1.9;letter-spacing:1px;color:#a3a3a3;">
-      <div style="font-family:Georgia,'Times New Roman',serif;font-size:15px;letter-spacing:2px;color:#ffffff;margin-bottom:8px;">VINUM ACADEMICUM</div>
-      <div style="text-transform:uppercase;font-size:9px;letter-spacing:1.5px;">Vinum Academicum d.o.o. &middot; ${WINERY.hq}</div>
-      <div style="margin-top:10px;">
-        <a href="tel:+385995226371" style="color:#ffffff;text-decoration:none;white-space:nowrap;">&#9742;&nbsp; ${WINERY.phone}</a>
-        <span style="color:#666666;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-        <a href="mailto:${WINERY.email}" style="color:#ffffff;text-decoration:none;">${WINERY.email}</a>
-      </div>
-    </td></tr>
-  </table>
-  <div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;line-height:1.6;color:#888888;text-align:center;padding:14px 12px 0;">Automatska poruka sustava Vinum Academicum.</div>
-</td></tr></table></body></html>`;
+    ? `<img src="${esc(cfg.logoUrl)}" alt="Vinum Academicum" width="180" style="display:block;margin:0 auto;border:0;max-width:180px;height:auto;">`
+    : `<div style="font-family:Georgia,'Times New Roman',serif;font-size:26px;letter-spacing:6px;color:#ffffff;text-transform:uppercase;">Vinum Academicum</div>`;
+  return `<!DOCTYPE html><html lang="hr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"></head>
+<body style="margin:0;padding:0;background:#f2f2f2;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#f2f2f2;">${esc(opt.preheader)}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f2f2f2;padding:28px 10px;"><tr><td align="center">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:#ffffff;font-family:Arial,Helvetica,sans-serif;">
+  <tr><td align="center" style="background:#000000;padding:38px 20px 30px;">${logo}
+    <div style="margin-top:14px;font-size:10px;letter-spacing:3px;color:#9a9a9a;text-transform:uppercase;">${opt.kicker}</div>
+    ${opt.badge ? `<div style="margin-top:16px;"><span style="display:inline-block;padding:6px 14px;border:1px solid #ffffff;color:#ffffff;font-size:10px;letter-spacing:2px;text-transform:uppercase;">${opt.badge}</span></div>` : ""}
+  </td></tr>
+  ${opt.inner}
+  <tr><td align="center" style="background:#000000;padding:22px 20px;font-size:10px;line-height:1.9;letter-spacing:1.5px;color:#8a8a8a;text-transform:uppercase;">
+    Vinum Academicum d.o.o. &middot; ${WINERY.hq}<br>
+    <a href="tel:+385995226371" style="color:#8a8a8a;text-decoration:none;">${WINERY.phone}</a> &middot; <a href="mailto:${WINERY.email}" style="color:#8a8a8a;text-decoration:none;">${WINERY.email}</a>
+  </td></tr>
+</table></td></tr></table></body></html>`;
 }
 
-const section = (html: string, top = 30) => `<tr><td style="padding:${top}px 36px 0;">${html}</td></tr>`;
-const note = (title: string, text: string) => section(`${label(title)}<div style="font-size:13px;line-height:1.8;color:#333333;background:#f5f5f5;border-left:3px solid #111111;padding:17px 18px;">${esc(text).replace(/\n/g, "<br>")}</div>`);
+const section = (html: string, top = 28) => `<tr><td style="padding:${top}px 36px 0;">${html}</td></tr>`;
+const note = (title: string, text: string) => section(`${label(title)}<div style="font-size:13px;line-height:1.75;color:#494949;background:#f8f8f8;padding:16px 18px;">${esc(text).replace(/\n/g, "<br>")}</div>`);
 const kv = (k: string, v: string) => `<span style="color:#868686;">${k}:</span> ${v}<br>`;
 const tel = (p: string) => p.replace(/[^\d+]/g, "");
 
@@ -126,3 +145,7 @@ export function customerRejectionEmail(o: Order, cfg: Cfg): { subject: string; h
     section(`<div style="font-family:Georgia,'Times New Roman',serif;font-size:26px;color:#1a1a1a;">Poštovani/a ${esc(contactName(o))},</div>
       <p style="font-size:14px;line-height:1.8;color:#494949;margin:16px 0 0;">zahvaljujemo vam na interesu za naša vina. Nažalost, narudžbu <b>${esc(o.order_number)}</b> ovaj put nismo u mogućnosti realizirati.</p>`, 34) +
     (o.rejection_reason ? note("Poruka vinarije", o.rejection_reason) : "") +
+    section(`<div style="font-size:12px;line-height:1.8;color:#868686;border-top:1px solid #ececec;padding:18px 0 34px;">Rado ćemo vam pomoći oko nove narudžbe. Nazovite nas na <a href="tel:+385995226371" style="color:#1a1a1a;">${WINERY.phone}</a> ili pišite na <a href="mailto:${WINERY.email}" style="color:#1a1a1a;">${WINERY.email}</a>.</div>`, 30);
+  return { subject: `[Vinum Academicum] Obavijest o narudžbi #${o.order_number}`, html: layout(cfg, { preheader: `Obavijest o narudžbi ${o.order_number}.`, kicker: "Obavijest o narudžbi", inner }) };
+}
+
