@@ -1,4 +1,4 @@
-  const kart = Math.floor(k / KARTON), ost = k % KARTON, p: string[] = [];
+    const kart = Math.floor(k / KARTON), ost = k % KARTON, p: string[] = [];
   if (kart) p.push(`${kart} ${kart === 1 ? "karton" : "kartona"}`);
   if (ost) p.push(`${ost} boca`);
   const iznos = lineTotal != null
@@ -32,8 +32,9 @@ const button = (href: string, label: string, filled: boolean) => `<td align="cen
 const label = (t: string) => `<div style="font-size:10px;line-height:1.5;letter-spacing:2px;color:#777777;text-transform:uppercase;margin-bottom:13px;padding-bottom:9px;border-bottom:1px solid #d8d8d8;">${t}</div>`;
 
 function layout(cfg: Cfg, opt: { preheader: string; kicker: string; badge?: string; inner: string }): string {
-  // Email klijenti ne mogu pouzdano učitati relativne putanje. cfg.logoUrl treba biti
-  // javno dostupan HTTPS URL PNG logotipa (npr. na vašoj domeni).
+  // cfg.logoUrl može pokazivati na javno dostupan SVG ili PNG.
+  // Za e-mail je potreban apsolutni HTTPS URL; relativne putanje poput assets/img/... ne rade.
+  // SVG podrška ovisi o e-mail klijentu, pa je PNG sigurnija rezervna opcija.
   const logo = cfg.logoUrl
     ? `<img src="${esc(cfg.logoUrl)}" alt="Vinum Academicum" width="190" style="display:block;width:190px;max-width:100%;height:auto;margin:0 auto;border:0;outline:none;text-decoration:none;">`
     : `<div style="font-family:Georgia,'Times New Roman',serif;font-size:25px;line-height:1.3;letter-spacing:4px;color:#ffffff;text-transform:uppercase;">Vinum Academicum</div>`;
@@ -125,4 +126,3 @@ export function customerRejectionEmail(o: Order, cfg: Cfg): { subject: string; h
     section(`<div style="font-family:Georgia,'Times New Roman',serif;font-size:26px;color:#1a1a1a;">Poštovani/a ${esc(contactName(o))},</div>
       <p style="font-size:14px;line-height:1.8;color:#494949;margin:16px 0 0;">zahvaljujemo vam na interesu za naša vina. Nažalost, narudžbu <b>${esc(o.order_number)}</b> ovaj put nismo u mogućnosti realizirati.</p>`, 34) +
     (o.rejection_reason ? note("Poruka vinarije", o.rejection_reason) : "") +
-    section(`<div style="font-size:12px;line-height:1.8;color:#868686;border-top:1px solid #ececec;padding:18px 0 34px;">Rado ćemo vam pomoći oko nove narudžbe. Nazovite nas na <a href="tel:+385995226371" style="color:#1a1a1a;">${WINERY.phone}</a> ili pišite na <a href="mailto:${WINERY.email}" style="color:#1a1a1a;">${WINERY.email}</a>.</div>`, 30);
