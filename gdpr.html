@@ -41,12 +41,19 @@
   <div class="age-gate" id="ageGate" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Provjera punoljetnosti">
     <div class="age-gate-inner">
       <img class="age-gate-logo" src="assets/img/vinumlogobijeli.svg" alt="Vinum Academicum">
-      <h2 class="age-gate-title">Jeste li punoljetni?</h2>
+      <h2 class="age-gate-title">Unesite datum rođenja</h2>
       <p class="age-gate-text">Ova stranica sadrži informacije o alkoholnim proizvodima te je namijenjena isključivo osobama starijim od 18 godina.</p>
-      <div class="age-gate-actions">
-        <button type="button" class="btn btn-light age-gate-btn" id="ageGateYes">Da, imam 18+</button>
-        <button type="button" class="btn btn-outline age-gate-btn" id="ageGateNo">Ne</button>
-      </div>
+      <form class="age-gate-form" id="ageGateForm" novalidate autocomplete="off">
+        <div class="age-gate-fields">
+          <label class="age-gate-field"><span>Dan</span><input type="text" id="ageDay" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="DD" aria-label="Dan rođenja"></label>
+          <label class="age-gate-field"><span>Mjesec</span><input type="text" id="ageMonth" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="MM" aria-label="Mjesec rođenja"></label>
+          <label class="age-gate-field age-gate-field--year"><span>Godina</span><input type="text" id="ageYear" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="GGGG" aria-label="Godina rođenja"></label>
+        </div>
+        <p class="age-gate-error" id="ageGateError" role="alert" aria-live="polite"></p>
+        <div class="age-gate-actions">
+          <button type="submit" class="btn btn-light age-gate-btn" id="ageGateSubmit">Nastavi</button>
+        </div>
+      </form>
       <p class="age-gate-note">Zabranjeno konzumiranje alkohola mlađima od 18 godina. Konzumirajte odgovorno.</p>
     </div>
   </div>
@@ -57,21 +64,29 @@
     </div>
   </div>
   <script>
-    // Provjera punoljetnosti: prikazuje se jednom po posjeti (sessionStorage),
-    // pa se ne ponavlja pri prelasku izmedju index.html i kontakt.html u istoj sjednici.
+    // Provjera punoljetnosti putem datuma rođenja. Datum se NE sprema nigdje – samo ishod
+    // (sessionStorage), pa se provjera ne ponavlja pri prelasku između stranica u istoj sjednici.
     (function(){
-      var KLJUC = 'va_punoljetan';
+      var KLJUC = 'va_punoljetan';        // '1' = punoljetan
+      var KLJUC_BLOK = 'va_maloljetan';   // '1' = maloljetan (sprječava ponovni pokušaj osvježavanjem)
       var gate = document.getElementById('ageGate');
       var blocked = document.getElementById('ageGateBlocked');
       if (!gate) return;
 
-      var vecPotvrdjeno = false;
-      try { vecPotvrdjeno = sessionStorage.getItem(KLJUC) === '1'; } catch (e) {}
+      function dohvati(k){ try { return sessionStorage.getItem(k) === '1'; } catch (e) { return false; } }
+      function spremi(k){ try { sessionStorage.setItem(k, '1'); } catch (e) {} }
 
-      if (vecPotvrdjeno){
+      function prikaziBlok(){
         gate.style.display = 'none';
-        return;
+        document.documentElement.style.overflowY = 'hidden';
+        if (blocked){
+          blocked.classList.add('is-open');
+          blocked.setAttribute('aria-hidden', 'false');
+        }
       }
+
+      if (dohvati(KLJUC)){ gate.style.display = 'none'; return; }
+      if (dohvati(KLJUC_BLOK)){ prikaziBlok(); return; }
 
       document.documentElement.style.overflowY = 'hidden';
       requestAnimationFrame(function(){
@@ -79,22 +94,61 @@
         gate.setAttribute('aria-hidden', 'false');
       });
 
-      var da = document.getElementById('ageGateYes');
-      var ne = document.getElementById('ageGateNo');
+      var form = document.getElementById('ageGateForm');
+      var dan = document.getElementById('ageDay');
+      var mj = document.getElementById('ageMonth');
+      var god = document.getElementById('ageYear');
+      var greska = document.getElementById('ageGateError');
 
-      da.addEventListener('click', function(){
-        try { sessionStorage.setItem(KLJUC, '1'); } catch (e) {}
-        gate.classList.remove('is-open');
-        gate.setAttribute('aria-hidden', 'true');
-        document.documentElement.style.overflowY = '';
-        setTimeout(function(){ gate.style.display = 'none'; }, 450);
+      [dan, mj, god].forEach(function(inp){
+        inp.addEventListener('input', function(){
+          inp.value = inp.value.replace(/\D/g, '');
+          greska.textContent = '';
+          if (inp === dan && inp.value.length === 2) mj.focus();
+          else if (inp === mj && inp.value.length === 2) god.focus();
+        });
+        inp.addEventListener('keydown', function(e){
+          if (e.key === 'Backspace' && !inp.value){
+            if (inp === god) mj.focus(); else if (inp === mj) dan.focus();
+          }
+        });
       });
+      setTimeout(function(){ dan.focus(); }, 450);
 
-      ne.addEventListener('click', function(){
-        gate.style.display = 'none';
-        if (blocked){
-          blocked.classList.add('is-open');
-          blocked.setAttribute('aria-hidden', 'false');
+      function izracunajGodine(d, m, g){
+        var danas = new Date();
+        var god18 = g + 18;
+        // punoljetan ako je 18. rođendan danas ili ranije
+        var rodjendan18 = new Date(god18, m - 1, d);
+        rodjendan18.setHours(0, 0, 0, 0);
+        var pocetakDana = new Date(danas.getFullYear(), danas.getMonth(), danas.getDate());
+        return pocetakDana >= rodjendan18;
+      }
+
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        var d = parseInt(dan.value, 10), m = parseInt(mj.value, 10), g = parseInt(god.value, 10);
+
+        if (!dan.value || !mj.value || !god.value){ greska.textContent = 'Unesite dan, mjesec i godinu rođenja.'; return; }
+        if (god.value.length !== 4 || g < 1900){ greska.textContent = 'Unesite godinu u obliku GGGG (npr. 1990).'; return; }
+
+        // provjera da datum stvarno postoji (npr. 31.02. nije valjan)
+        var t = new Date(g, m - 1, d);
+        if (m < 1 || m > 12 || d < 1 || t.getFullYear() !== g || t.getMonth() !== m - 1 || t.getDate() !== d){
+          greska.textContent = 'Taj datum ne postoji. Provjerite unos.'; return;
+        }
+        var danas = new Date(); danas.setHours(0, 0, 0, 0);
+        if (t > danas){ greska.textContent = 'Datum rođenja ne može biti u budućnosti.'; return; }
+
+        if (izracunajGodine(d, m, g)){
+          spremi(KLJUC);
+          gate.classList.remove('is-open');
+          gate.setAttribute('aria-hidden', 'true');
+          document.documentElement.style.overflowY = '';
+          setTimeout(function(){ gate.style.display = 'none'; }, 450);
+        } else {
+          spremi(KLJUC_BLOK);
+          prikaziBlok();
         }
       });
     })();
