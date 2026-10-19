@@ -9,6 +9,11 @@ h1{ font:500 34px/1.15 'Cormorant Garamond',serif; margin-bottom:26px; }
 h2{ font:500 11px 'DM Sans',sans-serif; letter-spacing:1.5px; text-transform:uppercase; color:var(--mute); margin:38px 0 14px; }
 .hint{ color:var(--mute); font-size:13px; line-height:1.7; max-width:680px; margin:-10px 0 24px; }
 .brand{ font:500 22px 'Cormorant Garamond',serif; letter-spacing:4px; text-transform:uppercase; }
+.logo{ display:block; height:34px; width:auto; }
+.top .brand{ display:flex; align-items:center; }
+.auth-logo{ margin:-40px -34px 6px; padding:38px 34px 30px; background:#000; text-align:center; }
+.auth-logo .logo{ height:56px; margin:0 auto; }
+.auth-logo + .sub{ margin-top:0 !important; }
 .brand span{ font:500 10px 'DM Sans',sans-serif; letter-spacing:2px; color:#9a9a9a; margin-left:10px; }
 
 /* gumbi / polja */
@@ -30,25 +35,46 @@ label input,label select,label textarea{ margin-top:8px; text-transform:none; le
 
 /* prijava */
 .auth{ min-height:100vh; display:flex; align-items:center; justify-content:center; background:#000; padding:20px; }
-.auth-card{ width:100%; max-width:400px; background:#fff; padding:40px 34px; display:flex; flex-direction:column; gap:18px; }
+.auth-card{ width:100%; max-width:400px; background:#fff; border:1px solid #2a2a2a; padding:40px 34px; display:flex; flex-direction:column; gap:18px; }
 .auth-card .brand{ text-align:center; font-size:24px; } .auth-card .sub{ text-align:center; color:var(--mute); font-size:12px; letter-spacing:1px; text-transform:uppercase; margin-top:-8px; }
 
 /* zaglavlje */
 .top{ position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:30px; padding:0 32px; height:68px; background:#000; color:#fff; }
-.top .brand{ font-size:18px; white-space:nowrap; }
+.top .brand{ font-size:18px; white-space:nowrap; } .top .brand span{ margin-left:16px; padding-left:16px; border-left:1px solid #3a3a3a; }
 .tabs{ display:flex; gap:4px; flex:1; }
 .tabs button{ background:none; border:0; color:#9a9a9a; height:68px; padding:0 18px; font-size:11px; letter-spacing:1.2px; text-transform:uppercase; border-bottom:2px solid transparent; }
 .tabs button:hover{ color:#fff; } .tabs button.is-on{ color:#fff; border-bottom-color:#fff; }
 .who{ display:flex; align-items:center; gap:16px; font-size:12px; color:#9a9a9a; } .who .link{ color:#fff; }
 .wrap{ max-width:1200px; margin:0 auto; padding:44px 32px 100px; }
 
+/* burger (samo mobilno) */
+.burger{ display:none; width:44px; height:44px; background:none; border:1px solid #3a3a3a; flex-direction:column; align-items:center; justify-content:center; gap:5px; }
+.burger span{ display:block; width:20px; height:1.5px; background:#fff; transition:transform .25s, opacity .2s; }
+.top.open .burger span:nth-child(1){ transform:translateY(6.5px) rotate(45deg); }
+.top.open .burger span:nth-child(2){ opacity:0; }
+.top.open .burger span:nth-child(3){ transform:translateY(-6.5px) rotate(-45deg); }
+
 /* kartice */
-.cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:0; border-top:1px solid var(--ink); }
-.card{ padding:22px 20px 18px 0; border-bottom:1px solid var(--line); }
-.card + .card{ padding-left:20px; border-left:1px solid var(--line); }
-.card b{ display:block; font:500 38px/1 'Cormorant Garamond',serif; margin-bottom:8px; }
-.card span{ font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--mute); }
-.card.hot b{ color:#000; } .card.hot span{ color:#000; font-weight:600; }
+.cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px; }
+.card{ --c:var(--ink); position:relative; display:flex; flex-direction:column; gap:14px; padding:20px 20px 18px; background:#fff; border:1px solid var(--line); border-top:3px solid var(--c); transition:transform .2s, box-shadow .2s; }
+.card:hover{ transform:translateY(-2px); box-shadow:0 8px 22px rgba(0,0,0,.07); }
+.card span{ order:-1; display:flex; align-items:center; gap:9px; font-size:10px; font-weight:500; letter-spacing:1.4px; text-transform:uppercase; color:var(--mute); line-height:1.4; }
+.card span::before{ content:''; flex:none; width:8px; height:8px; border-radius:50%; background:var(--c); }
+.card b{ display:block; font:500 46px/1 'Cormorant Garamond',serif; color:var(--ink); letter-spacing:-.5px; }
+/* boje po statusu (redoslijed: ukupno, nove, kontaktirani, potvrđene, izvršene, vrijednost) */
+.card:nth-child(1){ --c:#1a1a1a; }
+.card:nth-child(3){ --c:#b7791f; }
+.card:nth-child(4){ --c:#1a7f37; }
+.card:nth-child(5){ --c:#9a9a9a; }
+.card:nth-child(6){ --c:#1a1a1a; }
+/* nove narudžbe – istaknuto */
+.card.hot{ --c:#fff; background:#000; border-color:#000; border-top-color:#000; }
+.card.hot b{ color:#fff; }
+.card.hot span{ color:#e8e8e8; font-weight:600; }
+.card.hot span::before{ box-shadow:0 0 0 0 rgba(255,255,255,.7); animation:pulse 1.8s infinite; }
+@keyframes pulse{ 70%{ box-shadow:0 0 0 7px rgba(255,255,255,0); } 100%{ box-shadow:0 0 0 0 rgba(255,255,255,0); } }
+.card:nth-child(6){ background:var(--bg); }
+.card:nth-child(6) b{ font-size:38px; }
 
 /* status oznake */
 .badge{ display:inline-block; padding:4px 10px; font-size:10px; letter-spacing:1px; text-transform:uppercase; border:1px solid var(--ink); white-space:nowrap; }
@@ -97,8 +123,18 @@ table.t{ width:100%; border-collapse:collapse; }
 .prod-row .id{ color:var(--mute); font-size:11px; }
 
 @media (max-width:900px){
-  .top{ flex-wrap:wrap; height:auto; padding:12px 16px; gap:8px 16px; } .tabs{ order:3; width:100%; overflow:auto; } .tabs button{ height:44px; padding:0 14px; }
-  .who{ margin-left:auto; } .who #whoEmail{ display:none; }
+  .top{ flex-wrap:wrap; height:auto; min-height:64px; padding:10px 16px; gap:0; justify-content:space-between; align-items:center; }
+  .top .brand span{ display:none; } .logo{ height:28px; }
+  .burger{ display:flex; }
+  .tabs{ order:3; display:none; flex:none; flex-direction:column; gap:0; width:100%; margin-top:10px; border-top:1px solid #2a2a2a; }
+  .top.open .tabs{ display:flex; }
+  .tabs button{ height:54px; padding:0 14px; text-align:left; font-size:12px; border-bottom:1px solid #1f1f1f; border-left:2px solid transparent; }
+  .tabs button.is-on{ border-bottom-color:#1f1f1f; border-left-color:#fff; background:#111; }
+  .who{ order:4; display:none; width:100%; flex-direction:column; align-items:stretch; gap:12px; padding:16px 0 8px; }
+  .top.open .who{ display:flex; }
+  .who #whoEmail{ display:block; font-size:12px; word-break:break-all; }
+  .who #bLogout{ height:46px; border:1px solid #fff; text-decoration:none; text-transform:uppercase; letter-spacing:1px; font-size:11px; color:#fff; }
+  .who #bLogout:hover{ background:#fff; color:#000; }
   .wrap{ padding:28px 16px 80px; } h1{ font-size:28px; }
   .filters{ grid-template-columns:1fr 1fr; } .filters #fSearch{ grid-column:1 / -1; }
   /* tablica narudžbi → kartice */
@@ -106,6 +142,6 @@ table.t{ width:100%; border-collapse:collapse; }
   .t tr.row{ padding:14px 0; border-bottom:1px solid var(--line); } .t td{ border:0; padding:2px 0; }
   .t td[data-l]::before{ content:attr(data-l) ': '; color:var(--mute); font-size:11px; }
   .drawer-panel{ padding:34px 18px 50px; } .kv{ grid-template-columns:1fr; gap:2px; } .kv span{ margin-top:8px; font-size:11px; text-transform:uppercase; letter-spacing:1px; }
-  .card, .card + .card{ padding:18px 14px 14px 0; border-left:0; }
+  .cards{ grid-template-columns:1fr 1fr; gap:10px; } .card{ padding:16px 14px 14px; gap:10px; } .card b{ font-size:36px; } .card:nth-child(6){ grid-column:1 / -1; }
   .prod-row{ grid-template-columns:1fr 1fr; } 
 }

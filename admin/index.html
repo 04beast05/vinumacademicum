@@ -8,14 +8,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/admin/admin.css">
+<link rel="stylesheet" href="admin.css">
 </head>
 <body>
 
 <!-- PRIJAVA -->
-<main class="auth" id="vLogin">
+<main class="auth" id="vLogin" hidden>
   <form class="auth-card" id="fLogin" novalidate>
-    <div class="brand">Vinum Academicum</div>
+    <div class="auth-logo"><img class="logo" src="assets/img/va.png" alt="Vinum Academicum"></div>
     <p class="sub">Administracija narudžbi</p>
     <label>E-mail<input type="email" name="email" autocomplete="username" required></label>
     <label>Lozinka<input type="password" name="password" autocomplete="current-password" required></label>
@@ -28,7 +28,7 @@
 <!-- NOVA LOZINKA (obvezna pri prvoj prijavi i nakon oporavka) -->
 <main class="auth" id="vPass" hidden>
   <form class="auth-card" id="fPass" novalidate>
-    <div class="brand">Vinum Academicum</div>
+    <div class="auth-logo"><img class="logo" src="assets/img/va.png" alt="Vinum Academicum"></div>
     <p class="sub" id="passSub">Postavite novu lozinku</p>
     <label>Nova lozinka (min. 12 znakova)<input type="password" name="p1" autocomplete="new-password" required></label>
     <label>Ponovite lozinku<input type="password" name="p2" autocomplete="new-password" required></label>
@@ -40,7 +40,8 @@
 <!-- APLIKACIJA -->
 <div id="vApp" hidden>
   <header class="top">
-    <div class="brand">Vinum Academicum <span>Administracija</span></div>
+    <div class="brand"><img class="logo" src="assets/img/va.png" alt="Vinum Academicum"><span>Administracija</span></div>
+    <button class="burger" id="bBurger" type="button" aria-label="Izbornik" aria-expanded="false" aria-controls="tabs"><span></span><span></span><span></span></button>
     <nav class="tabs" id="tabs">
       <button data-tab="pregled" class="is-on">Pregled</button>
       <button data-tab="narudzbe">Narudžbe</button>
@@ -92,6 +93,17 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="/admin/admin.js"></script>
+<script src="admin.js"></script>
+<script>
+(function(){
+  var top=document.querySelector('.top'), b=document.getElementById('bBurger');
+  if(!top||!b) return;
+  function set(o){ top.classList.toggle('open',o); b.setAttribute('aria-expanded',o); }
+  b.addEventListener('click',function(){ set(!top.classList.contains('open')); });
+  document.getElementById('tabs').addEventListener('click',function(e){ if(e.target.closest('button[data-tab]')) set(false); });
+  document.getElementById('bLogout').addEventListener('click',function(){ set(false); });
+  window.addEventListener('resize',function(){ if(window.innerWidth>900) set(false); });
+})();
+</script>
 </body>
 </html>
